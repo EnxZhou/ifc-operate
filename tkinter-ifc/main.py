@@ -77,7 +77,8 @@ def get_structural_storey(_id):
         return dict_structural
 
 
-ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
+# ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
+ifc_file_path = "D:/Code/Python/Practice/ifc-operate/tkinter-ifc/two_plate.ifc"
 ifc_file = ifc.open(ifc_file_path)
 
 # Change IfcBuildingElement to IfcWall  if your are only interested in walls for example
@@ -98,19 +99,22 @@ for inst in instances:
 
 # print(excel_list)
 df1 = pd.DataFrame(excel_list)
+print(df1)
 
 # --------------analyze dataframe -------------
 
-df2 = df1
+# df2 = df1
 # define the index for analyzing the file with pivo_tables, here I use ["Name","IfcType"]
-pivot1 = df2.pivot_table(index=["Name", "IfcType"])
+# pivot1 = df2.pivot_table(index=["Name", "IfcType"])
 # count by IfcGlobalId
-pivot2 = df2.pivot_table(index=["Name", "IfcType"], values=["IfcGlobalId"], aggfunc=[len])
+# pivot2 = df2.pivot_table(index=["Name", "IfcType"], values=["IfcGlobalId"], aggfunc=[len])
 
-outfile = SaveFileAs(".xlsx")
 
-writer = pd.ExcelWriter(outfile)
-df1.to_excel(writer, "Psets")
-pivot1.to_excel(writer, 'Analyze')
-pivot2.to_excel(writer, "TypeCount")
-writer.save()
+# outfile = SaveFileAs(".xlsx")
+# outfile="D:/Code/Python/Practice/ifc-operate/tkinter-ifc/1.xlsx"
+#
+# writer = pd.ExcelWriter(outfile)
+# df1.to_excel(writer, "Psets")
+# pivot1.to_excel(writer, 'Analyze')
+# pivot2.to_excel(writer, "TypeCount")
+# writer.save()
