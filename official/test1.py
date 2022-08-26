@@ -3,44 +3,60 @@ import ifcopenshell
 import ifcopenshell.geom
 import multiprocessing
 
+
 def VertStd(n: float):
     return round(n, 3)
 
-# vert 顶点
-class vert(object):
-    def __init__(self,index:int, x: float, y: float, z: float):
-        self.index = index
+
+class Coord(object):
+    def __init__(self, x: float, y: float, z: float):
         self.x = x
         self.y = y
         self.z = z
+
+
+# vert 顶点
+class Vert(Coord):
+    def __init__(self,index:int, x: float, y: float, z: float):
+        self.index=index
+        super().__init__(x, y, z)
+
+    def getIndex(self):
+        return self.index
 
     def getVert(self):
         return self.x, self.y, self.z
 
 
+
+
 # edge 边
 class edge(object):
+    def __init__(self, xi: int, yi: int, zi: int):
+        self.xi = xi
+
     def getEdge(self):
         return ((self.start.x, self.start.y, self.start.z), (self.end.x, self.end.y, self.end.z))
 
     def genFromIndexVertList(self, vert_list: list, start_point_by_index: int, end_point_by_index: int):
-        startPointByFloat = indexList2VertList(vert_list,start_point_by_index)
-        endPointByFloat = indexList2VertList(vert_list,end_point_by_index),
-        self.start = vert(start_point_by_index,startPointByFloat[0], startPointByFloat[1], startPointByFloat[2])
-        self.end = vert(end_point_by_index,endPointByFloat[0], endPointByFloat[1], endPointByFloat[2])
+        startPointByFloat = indexList2VertList(vert_list, start_point_by_index)
+        endPointByFloat = indexList2VertList(vert_list, end_point_by_index),
+        self.start = Vert(start_point_by_index, startPointByFloat[0], startPointByFloat[1], startPointByFloat[2])
+        self.end = Vert(end_point_by_index, endPointByFloat[0], endPointByFloat[1], endPointByFloat[2])
 
-def indexList2VertList(vert_list:list,index_list:list):
-    res=[]
-    for i in index_list:
+
+def indexList2VertList(vert_list: list, index_list: list):
+    res = []
+    for i in range(0, len(index_list)):
         res.append(vert_list[i])
     return res
 
 
 class TestClass:
     def test_indexList2VertList(self):
-        vert_list=[[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0], [0.06, 0.0, -0.001]]
-        a=indexList2VertList(vert_list,[0,1,2])
-        assert a==[[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0]]
+        vert_list = [[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0], [0.06, 0.0, -0.001]]
+        a = indexList2VertList(vert_list, [0, 1, 2])
+        assert a == [[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0]]
 
 
 class IFCElement(object):
@@ -88,9 +104,9 @@ def loadDataSet():
                 # Indices of vertices per triangle face e.g. [f1v1, f1v2, f1v3, f2v1, f2v2, f2v3, ...]
                 faces = shape.geometry.faces
                 # Material names and colour style information that are relevant to this shape
-                materials = shape.geometry.materials
+                # materials = shape.geometry.materials
                 # Indices of material applied per triangle face e.g. [f1m, f2m, ...]
-                material_ids = shape.geometry.material_ids
+                # material_ids = shape.geometry.material_ids
 
                 grouped_elements.append(curElement)
                 # Since the lists are flattened, you may prefer to group them per face like so depending on your geometry kernel
@@ -103,7 +119,6 @@ def loadDataSet():
                     grouped_edges.append([edges[i], edges[i + 1]])
                 for i in range(0, len(faces), 3):
                     grouped_faces.append([faces[i], faces[i + 1], faces[i + 2]])
-                print(element)
                 if not iterator.next():
                     break
         print(grouped_elements[0].groupedVerts)
@@ -112,7 +127,6 @@ def loadDataSet():
 
 if __name__ == '__main__':
     # verts, edges, faces = loadDataSet()
-    vert_list=[[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0], [0.06, 0.0, -0.001], [0.06, 0.2, 0.0], [0.06, 0.2, -0.001], [0.09, 0.2, 0.0], [0.09, 0.2, -0.001], [0.03, 0.35, 0.0], [0.03, 0.35, -0.001], [-0.03, 0.2, 0.0], [-0.03, 0.2, -0.001], [-0.0, 0.2, 0.0], [-0.0, 0.2, -0.001]]
-    a=edge()
-    a.genFromIndexVertList(vert_list,1,3)
-    print(a.getEdge())
+    vert=Vert(1,1.1,2.2,3.3)
+    print(vert.getVert())
+    print(vert.getIndex())
