@@ -15,6 +15,9 @@ class Coord(object):
         self.y = y
         self.z = z
 
+    def __str__(self):
+        return "x: %s, y: %s, z: %s" % (self.x,self.y,self.z)
+
 
 # vert 顶点
 class Vert(object):
@@ -173,6 +176,5 @@ def loadDataSet():
 
 if __name__ == '__main__':
     # verts, edges, faces = loadDataSet()
-    vert = Vert(1, 1.1, 2.2, 3.3)
-    print(vert.getVert())
-    print(vert.getIndex())
+    vert = Vert(1.1, 2.2, 3.3)
+    print(vert.get_vert())
