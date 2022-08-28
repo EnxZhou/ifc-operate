@@ -22,8 +22,9 @@ out/
 
 *.tar
 *.log
-*/.idea/
-*/.vscode/
+.idea/
+**/.idea/
+.vscode/
 *.7z
 *.zip
 /tmp
