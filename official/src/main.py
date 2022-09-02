@@ -1,9 +1,11 @@
 #!/bin/python
 import ifcopenshell
 import ifcopenshell.geom
+# from ifcopenshell import geom
 import multiprocessing
 import os
 
+import parseIFC
 
 def VertStd(n: float):
     return round(n, 3)
@@ -16,19 +18,19 @@ class Coord(object):
         self.z = z
 
     def __str__(self):
-        return "x: %s, y: %s, z: %s" % (self.x,self.y,self.z)
+        return "x: %s, y: %s, z: %s" % (self.x, self.y, self.z)
 
 
-# vert 顶点
-class Vert(object):
+# Vertex 顶点
+class Vertex(object):
     def __init__(self, x: float, y: float, z: float):
         self.point = Coord(x, y, z)
 
-    def get_vert(self):
+    def get_vertex(self):
         return self.point
 
 
-# edge 边
+# Edge 边
 class Edge(object):
     def __init__(self, start: Coord, end: Coord):
         self.points = [start, end]
@@ -37,6 +39,7 @@ class Edge(object):
         return self.points
 
 
+# Face 面
 class Face(object):
     def __init__(self, one: Coord, two: Coord, three: Coord):
         self.points = [one, two, three]
@@ -45,45 +48,29 @@ class Face(object):
         return self.points
 
 
-def parse_index_list(point_list: list, index_list: list):
-    res = []
-    limit = len(point_list)
-    for i in range(0, len(index_list)):
-        if i >= limit:
-            raise Exception("index: %i beyond the size of point_list:",i,limit)
-        else:
-            res.append(point_list[i])
+class Solid(object):
+    def __init__(self):
+        pass
 
 
-def indexList2VertList(vert_list: list, index_list: list):
+def indexList2VertexList(vertex_list: list, index_list: list):
     res = []
     for i in range(0, len(index_list)):
-        res.append(vert_list[i])
+        res.append(vertex_list[i])
     return res
 
-
-class TestClass:
-    # def test_indexList2VertList(self):
-    #     vert_list = [[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0], [0.06, 0.0, -0.001]]
-    #     a = indexList2VertList(vert_list, [0, 1, 2])
-    #     assert a == [[-0.0, 0.0, -0.001], [-0.0, 0.0, 0.0], [0.06, 0.0, 0.0]]
-
-    def test_parse_index_list(self):
-        point_list = [-0.0, 0.0, -0.001,-0.0, 0.0, 0.0, 0.06, 0.0, 0.0, 0.06, 0.0, -0.001]
-        a = parse_index_list(point_list, [0, 1, 2])
-        assert a == [-0.0, 0.0, -0.001]
 
 class IFCElement(object):
     def __init__(self):
         self.guid = ""
         self.name = ""
-        self.IFCVerts = []
+        self.IFCVertices = []
         self.IFCEdges = []
         self.IFCFaces = []
 
     def vert_from_ifc(self, verts):
         for i in range(0, len(verts), 3):
-            self.IFCVerts.append([VertStd(verts[i]), VertStd(verts[i + 1]), VertStd(verts[i + 2])])
+            self.IFCVertices.append([VertStd(verts[i]), VertStd(verts[i + 1]), VertStd(verts[i + 2])])
 
     def edge_from_ifc(self, edges):
         for i in range(0, len(edges), 2):
@@ -100,21 +87,17 @@ class IFCElement(object):
         self.name = name
 
 
-class BlockElement(object):
-    pass
-
-
 class IFCFile(object):
     def __init__(self):
         self.name = ""
         self.path = ""
-        self.file = object
+        self.file = ifcopenshell.file
 
     def open(self, path: str):
         try:
-            ifc_file = ifcopenshell.open(path)
+            ifcFile = ifcopenshell.open(path)
             self.path = path
-            self.file = ifc_file
+            self.file = ifcFile
             self.name = os.path.basename(path)
         except IOError:
             print(ifcopenshell.get_log())
@@ -129,11 +112,13 @@ class IFCFile(object):
             while True:
                 cur_element = IFCElement()
                 shape = iterator.get()
+                elements.append(self.file.by_guid(shape.guid))
+        return elements
 
 
 def loadDataSet():
     try:
-        ifc_file = ifcopenshell.open('./example/segment-1.ifc')
+        ifc_file = ifcopenshell.open('../example/segment-1.ifc')
     except:
         print(ifcopenshell.get_log())
     else:
@@ -174,7 +159,7 @@ def loadDataSet():
     return grouped_verts, grouped_edges, grouped_faces
 
 
+
 if __name__ == '__main__':
     # verts, edges, faces = loadDataSet()
-    vert = Vert(1.1, 2.2, 3.3)
-    print(vert.get_vert())
+    ifc_file=IFCFile.open('../example/segment-1.ifc')
