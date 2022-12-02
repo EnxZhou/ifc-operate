@@ -155,11 +155,11 @@ def loadDataSet():
                     grouped_faces.append([faces[i], faces[i + 1], faces[i + 2]])
                 if not iterator.next():
                     break
-        print(grouped_elements[0].IFCVerts)
+        print(grouped_elements[0].IFCVertices)
     return grouped_verts, grouped_edges, grouped_faces
 
 
 
 if __name__ == '__main__':
-    # verts, edges, faces = loadDataSet()
-    ifc_file=IFCFile.open('../example/segment-1.ifc')
+    verts, edges, faces = loadDataSet()
+    # ifc_file=IFCFile.open('../example/segment-1.ifc')
