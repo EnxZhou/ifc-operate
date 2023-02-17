@@ -26,6 +26,7 @@ from OCC.Core.GeomAbs import (
 )
 from OCC.Extend.TopologyUtils import is_face, is_edge, TopologyExplorer
 from OCC.Extend.DataExchange import read_step_file, read_step_file_with_names_colors
+from OCC.Core.BRep import BRep_Tool
 
 
 def get_face(_shape):
@@ -54,6 +55,7 @@ def print_shape_mass(_shape):
     print("shape surface mass: ", round(system.Mass(), 2))
     brepgprop_VolumeProperties(_shape, system)
     print("shape volume mass: ", round(system.Mass(), 2))
+    print("principal properties of inertia:", system.PrincipalProperties())
     centreOfMass = system.CentreOfMass()
     cx = round(centreOfMass.X(), 2)
     cy = round(centreOfMass.Y(), 2)
@@ -97,10 +99,35 @@ def shape_edges_length(the_shape):
     edgeCount = t.number_of_edges()
     print("edge count: ", edgeCount)
     for edge in t.edges():
+        pointsOfEdge=shape_points(edge)
+        print("points of edge: ",pointsOfEdge)
         brepgprop_LinearProperties(edge, props)
         edge_len = props.Mass()
         edgeList.append(round(edge_len, 2))
     return edgeList
+
+
+# 体的全部顶点
+def shape_points(the_shape):
+    t = TopologyExplorer(the_shape)
+    pointCount = t.number_of_vertices()
+    print("point count: ", pointCount)
+    anVertexExplorer = TopExp_Explorer(the_shape,TopAbs_VERTEX)
+    vertex = []
+    while anVertexExplorer.More():
+        anVertex = topods_Vertex(anVertexExplorer.Current())
+        aPnt = BRep_Tool.Pnt(anVertex)
+
+        vertex.append(aPnt)
+        anVertexExplorer.Next()
+
+    pnts=[]
+    for v in vertex:
+        coordinate = (v.X(),v.Y(),v.Z())
+        if coordinate not in pnts:
+            pnts.append(coordinate)
+
+    return pnts
 
 
 def measure_shape_mass_center_of_gravity(shape):
@@ -251,17 +278,19 @@ def step_model_explore():
         name, _ = stp_names_colors[shp]
         print("name:", name)
 
+    # step文件生成的shape
     stpshp2 = TopologyExplorer(stpshp)
-    solidList=stpshp2.solids()
+    # 获取文件中的体
+    solidList = stpshp2.solids()
     idx = 0
     for solid in solidList:
         idx = idx + 1
-        print("index: ",idx)
+        print("index: ", idx)
         print_shape_mass(solid)
         # print_face_of_shape(solid)
         faceList = shape_faces_surface(solid)
         edgeList = shape_edges_length(solid)
-        print()
+        # shape_points(solid)
 
     print("shape count:", idx)
 
