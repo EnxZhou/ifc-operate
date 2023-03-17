@@ -1,3 +1,5 @@
+from OCC.Core import STEPControl
+from OCC.Display import SimpleGui
 from OCC.Display.SimpleGui import init_display
 from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeBox, BRepPrimAPI_MakeSphere
 from OCC.Core.gp import gp_Pnt
@@ -314,3 +316,4 @@ if __name__ == '__main__':
     # display, start_display, add_menu, add_function_to_menu = init_display()
     # display.DisplayShape(read_face, update=True)
     # start_display()
+    # Create a STEP reader object

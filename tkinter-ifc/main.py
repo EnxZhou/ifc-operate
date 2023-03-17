@@ -1,8 +1,12 @@
 #!/bin/python
+import os.path
+
 import ifcopenshell as ifc
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
 import pandas as pd
+
+import parseIfc
 
 
 # -------Functions-----------------
@@ -18,7 +22,7 @@ def SaveFileAs(_extension):
     return filename
 
 
-def get_attr_of_pset(_id):
+def get_attr_of_pset(_id, ifc_file):
     """ Get all attributes of an instance by given Id
         param _id: id of instance
         return: dict of dicts of attributes
@@ -57,7 +61,7 @@ def get_attr_of_pset(_id):
         return dict_psets
 
 
-def get_structural_storey(_id):
+def get_structural_storey(_id, ifc_file):
     """ Get structural (IfcBuilgingStorey) information of an instance by given Id
         param _id: id of instance
         return: dict of attributes
@@ -77,44 +81,77 @@ def get_structural_storey(_id):
         return dict_structural
 
 
-# ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
-ifc_file_path = "D:/Code/Python/Practice/ifc-operate/tkinter-ifc/two_plate.ifc"
-ifc_file = ifc.open(ifc_file_path)
+def test1():
+    # ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
+    # ifc_file_path = "./two_plate.ifc"
+    # ifc_file_path = "./tekla-2019-C3-JD-31-DB-252.ifc"
+    ifc_file_path = "./segment.ifc"
 
-# Change IfcBuildingElement to IfcWall  if your are only interested in walls for example
-instances = ifc_file.by_type("IfcBuildingElement")
+    ifc_file = ifc.open(ifc_file_path)
 
-excel_list = []
-project = ifc_file.by_type("IfcProject")[0].Name
+    # Change IfcBuildingElement to IfcWall  if you are only interested in walls for example
+    filterType = "IfcBuildingElement"
+    # filterType = "IfcProduct"
+    instances = ifc_file.by_type(filterType)
 
-for inst in instances:
-    info_structural = get_structural_storey(inst.id())
-    info_pset = get_attr_of_pset(inst.id())
-    info = inst.get_info()
-    info_pset.update({"Name": inst.Name})
-    info_pset.update({"IfcType": info["type"]})
-    info_pset.update(info_structural)
-    info_pset.update({"Project": project})
-    excel_list.append(info_pset)
+    excel_list = []
+    project = ifc_file.by_type("IfcProject")[0].Name
 
-# print(excel_list)
-df1 = pd.DataFrame(excel_list)
-print(df1)
+    for inst in instances:
+        # info_structural = get_structural_storey(inst.id())
+        info_pset = get_attr_of_pset(inst.id())
+        info = inst.get_info()
+        print("info: ", info)
+        # inst.Name=inst.Name+"-1"
+        info_pset.update({"Name": inst.Name})
+        info_pset.update({"IfcType": info["type"]})
+        # info_pset.update(info_structural)
+        info_pset.update({"Project": project})
+        excel_list.append(info_pset)
+
+    # print(excel_list)
+    # df1 = pd.DataFrame(excel_list)
+    # print(df1['Name'])
+    # ifc_file.write("segment_1.ifc")
+
 
 # --------------analyze dataframe -------------
 
 # df2 = df1
-# define the index for analyzing the file with pivo_tables, here I use ["Name","IfcType"]
+# # define the index for analyzing the file with pivo_tables, here I use ["Name","IfcType"]
 # pivot1 = df2.pivot_table(index=["Name", "IfcType"])
-# count by IfcGlobalId
+# # count by IfcGlobalId
 # pivot2 = df2.pivot_table(index=["Name", "IfcType"], values=["IfcGlobalId"], aggfunc=[len])
-
-
+#
+#
 # outfile = SaveFileAs(".xlsx")
-# outfile="D:/Code/Python/Practice/ifc-operate/tkinter-ifc/1.xlsx"
+# outfile="./1.xlsx"
 #
 # writer = pd.ExcelWriter(outfile)
 # df1.to_excel(writer, "Psets")
 # pivot1.to_excel(writer, 'Analyze')
 # pivot2.to_excel(writer, "TypeCount")
 # writer.save()
+
+
+def modifyIfcFile(file_path):
+    file_name,file_ext = os.path.splitext(os.path.basename(file_path))
+    new_file_name = file_name+"_1"+file_ext
+    ifc_file = parseIfc.IfcFile(file_path)
+    ifc_file.update_guid_name()
+    ifc_file.save_file(new_file_name)
+
+
+def test3():
+    start = 24
+    end = 33
+    input_list = []
+    for i in range(start, end + 1):
+        input_list.append("C3-JD-" + str(i).zfill(2) + ".ifc")
+
+    for f in input_list:
+        modifyIfcFile(f)
+
+
+if __name__ == '__main__':
+    test3()

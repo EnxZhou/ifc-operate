@@ -16,6 +16,15 @@ step文件的优点，几乎保留了ifc文件的全部，包括零件名称
 但可以直接读取step文件中的零件名称及颜色，顺序和FreeCAD的文件顺序是一致的，
 可以判断一下，如果顺序和获取shape也一致，就解决了零件名称和shape关联的问题
 
+#### FreeCAD处理
+一般tekla导出的ifc文件，Name字段都是设计人员自己定义的名称，例如：底板、横隔板
+将FreeCAD打开ifc文件后，会自动区分每个零件，会零件加一个序列号，例如底板01
+这就不好与ifc文件中的零件对应起来
+
+#### IfcConvert
+.\IfcConvert.exe .\xx.ifc .\xx.stp --include=entities IfcPlate
+生成的step文件中，会将一个IfcPlate分成多个PRODUCT，而且unit不统一，很难搞
+
 ## 模型特征提取
 
 ### shape的特征
