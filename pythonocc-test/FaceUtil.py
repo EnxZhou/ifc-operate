@@ -111,7 +111,7 @@ def get_face_props(_face: TopoDS_Face):
     maxEdgeLen = 0.0
     minEdgeFeature = None
     minEdgeLen = float('inf')
-    edgeLenSUm = []
+    edge_len_list = []
 
     edge_list = EdgeUtil.get_edges_from_face(_face)
 
@@ -119,7 +119,7 @@ def get_face_props(_face: TopoDS_Face):
     for edge in edge_list:
         edgeFeature = EdgeUtil.get_edge_props(edge)
         edgeLen = edgeFeature.length
-        edgeLenSUm.append(edgeLen)
+        edge_len_list.append(edgeLen)
         if edgeLen > maxEdgeLen:
             maxEdgeLen = edgeLen
             maxEdgeFeature = edgeFeature
@@ -129,6 +129,16 @@ def get_face_props(_face: TopoDS_Face):
 
     faceFeatureReturn.maxEdgeFeature = maxEdgeFeature
     faceFeatureReturn.minEdgeFeature = minEdgeFeature
+
+    # 计算面积平均值和方差
+    edge_length = sum(edge_len_list)
+    edge_len_average = sum(edge_len_list) / len(edge_len_list)
+    edge_len_variance = sum([(m - edge_len_average) ** 2 \
+                             for m in edge_len_list]) / len(edge_len_list)
+
+    faceFeatureReturn.perimeter = edge_length
+    faceFeatureReturn.edgeLengthAverage=edge_len_average
+    faceFeatureReturn.edgeLengthVariance=edge_len_variance
 
     # 获取面的类型、法线坐标、法线方向
     kind_location_axis = get_face_kind_location_axis(_face)

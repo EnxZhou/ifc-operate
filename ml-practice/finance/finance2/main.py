@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def Finance2():
     train = pd.read_csv('train.csv')
     test = pd.read_csv('test.csv')
@@ -52,7 +53,8 @@ def Finance2():
     X_train.drop(['fraud'], axis=1, inplace=True)
     y_label = train_data['fraud']
     # X_train.to_csv("tmp_train.csv", index=False, sep=',')
-    return X_train,y_label,test_data
+    return X_train, y_label, test_data
+
 
 def Train(mean_X_train, y_label):
     from sklearn.ensemble import AdaBoostClassifier
@@ -103,8 +105,8 @@ def Train(mean_X_train, y_label):
         n_estimators=2000, subsample=1, colsample_bytree=1,
     )
 
-    X_train=mean_X_train
-    y_train=y_label
+    X_train = mean_X_train
+    y_train = y_label
     xgboost_clf.fit(X_train, y_train)
     GBDT_clf.fit(X_train, y_train)
     Tree_clf.fit(X_train, y_train)
@@ -112,12 +114,12 @@ def Train(mean_X_train, y_label):
     model_lgb.fit(X_train, y_label)
 
     # K折交叉检验
-    K_model_list = [Tree_clf, GBDT_clf, xgboost_clf, RFC_clf,model_lgb]
+    K_model_list = [Tree_clf, GBDT_clf, xgboost_clf, RFC_clf, model_lgb]
     K_result = pd.DataFrame()
     for i, val in enumerate(K_model_list):
         score = cross_validate(val, X_train, y_train, cv=3, scoring='accuracy')
         K_result.loc[i, 'accuracy'] = score['test_score'].mean()
-    K_result.index = pd.Series(['Tree', 'GBDT', 'XGBoost', 'RFC','lgb'])
+    K_result.index = pd.Series(['Tree', 'GBDT', 'XGBoost', 'RFC', 'lgb'])
     print(K_result)
 
 
@@ -132,7 +134,7 @@ def Train2(X_train, y_label, test_data):
     # 模型训练
     model_lgb.fit(X_train, y_label)
 
-    score = cross_validate(model_lgb,X_train,y_label,cv=6,scoring='accuracy')
+    score = cross_validate(model_lgb, X_train, y_label, cv=6, scoring='accuracy')
     print(score['test_score'].mean())
 
     # AUC评测： 以proba进行提交，结果会更好
@@ -143,11 +145,11 @@ def Train2(X_train, y_label, test_data):
     # sub_df['fraud'] = y_pred[:, 1]
     # sub_df.to_csv('./result-' + nowTime + '.csv', index=False)
 
-def main():
-    X_train,y_lable,test_data=Finance2()
-    Train(X_train, y_lable)
-    # Train2(X_train,y_lable,test_data)
 
+def main():
+    X_train, y_lable, test_data = Finance2()
+    # Train(X_train, y_lable)
+    Train2(X_train,y_lable,test_data)
 
 
 if __name__ == '__main__':

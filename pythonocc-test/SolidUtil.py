@@ -71,7 +71,8 @@ def get_solid_feature(_solid):
     # 计算面积平均值和方差
     surface_area = sum(face_masses)
     face_mass_average = sum(face_masses) / len(face_masses)
-    face_mass_variance = sum([(m - face_mass_average) ** 2 for m in face_masses]) / len(face_masses)
+    face_mass_variance = sum([(m - face_mass_average) ** 2 \
+                              for m in face_masses]) / len(face_masses)
 
     # 创建 SolidFeature 对象
     feature = SolidFeature()
