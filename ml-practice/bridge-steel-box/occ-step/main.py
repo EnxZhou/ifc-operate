@@ -3,11 +3,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def Finance1():
-    train = pd.read_csv('train.csv')
-    test = pd.read_csv('test.csv')
-    # 数据合并，有助于离散标签编码
-    data = pd.concat([train, test], axis=0)
+def ProcessData():
+    data = pd.read_csv('step-C3-JD-24_26-name_to_class.csv')
     numerical_feature = list(data.select_dtypes(exclude=['object']).columns)  # 数值型变量
     object_feature = list(data.select_dtypes(include=['object']).columns)
 
@@ -19,7 +16,7 @@ def Finance1():
     # 单值变量
     unique_feature = []
     for feature in numerical_feature:
-        temp = train[feature].nunique()  # 返回数据去重后的个数
+        temp = data[feature].nunique()  # 返回数据去重后的个数
         if temp == 1:
             unique_feature.append(feature)
         elif 1 < temp <= 10:
@@ -33,30 +30,21 @@ def Finance1():
     # show_numerical_cor(data[numerical_feature])
     # show_boxplot(serial_df)
 
+    data.drop(['index'],axis=1,inplace=True)
+    nan_rows = data[data.isna().any(axis=1)]
+    data.dropna(inplace=True)
+
     from sklearn.preprocessing import LabelEncoder
-    # job_le = LabelEncoder()
-    # data['job'] = job_le.fit_transform(data['job'])
-    # data['marital'] = data['marital'].map({'unknown': 0, 'single': 1, 'married': 2, 'divorced': 3})
-    # edu_le = LabelEncoder()
-    # data['education']=edu_le.fit_transform(data['education'])
-    # data['housing'] = data['housing'].map({'unknown': 0, 'no': 1, 'yes': 2})
+    le = LabelEncoder()
+    label = le.fit_transform(data['class'])
+    data.drop(object_feature, axis=1, inplace=True)
+    data["class"] = label
 
-    # data.to_csv("tmp_train.csv")
-    data['subscribe'] = data['subscribe'].map({'no': 0, 'yes': 1})
-    unique_column = data[object_feature].nunique()
-    unique_column.drop('subscribe', inplace=True)
-    unique_column = unique_column.index
-    print(unique_column)
-    for col in unique_column:
-        le = LabelEncoder()
-        data[col] = le.fit_transform(data[col])
-    data.to_csv("tmp_train.csv")
-
-    train_data = data[data['subscribe'].notnull()]
-    test_data = data[data['subscribe'].isnull()]
+    train_data = data[data['class'].notnull()]
+    test_data = data[data['class'].isnull()]
     X_train = train_data.copy()
-    X_train.drop(['subscribe'], axis=1, inplace=True)
-    y_label = train_data['subscribe']
+    X_train.drop(['class'], axis=1, inplace=True)
+    y_label = train_data['class']
     return X_train, y_label, test_data
 
 
@@ -167,36 +155,9 @@ def Train1(mean_X_train, y_label):
     print(K_result)
 
 
-def Train2(X_train, y_label, test_data):
-    import lightgbm as lgb
-    from sklearn.model_selection import cross_validate
-    model_lgb = lgb.LGBMClassifier(
-        num_leaves=2 ** 5 - 1, reg_alpha=0.25, reg_lambda=0.25, objective='binary',
-        max_depth=-1, learning_rate=0.005, min_child_samples=3, random_state=2022,
-        n_estimators=2000, subsample=1, colsample_bytree=1,
-    )
-    # 模型训练
-    model_lgb.fit(X_train, y_label)
-
-    score = cross_validate(model_lgb, X_train, y_label, cv=6, scoring='accuracy')
-    print(score['test_score'].mean())
-
-    # AUC评测： 以proba进行提交，结果会更好
-    # y_pred = model_lgb.predict_proba(test_data.drop(['subscribe'], axis=1))
-    y_pred = model_lgb.predict(test_data.drop(['subscribe'], axis=1))
-    sub_map = {1: 'yes', 0: 'no'}
-    import time
-    nowTime = time.strftime('%Y%m%d-%H%M%S')
-    sub_df = pd.read_csv('./submission.csv')
-    # sub_df['subscribe'] = y_pred[:, 1]
-    sub_df['subscribe'] = [sub_map[x] for x in y_pred]
-    sub_df.to_csv('./result-' + nowTime + '.csv', index=False)
-
-
 def main():
-    X_train, y_label, test_data = Finance1()
-    # Train1(X_train,y_label)
-    Train2(X_train, y_label, test_data)
+    X_train, y_label, test_data = ProcessData()
+    Train1(X_train, y_label)
 
 
 if __name__ == '__main__':
