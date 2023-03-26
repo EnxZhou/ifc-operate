@@ -28,4 +28,6 @@ out/
 *.7z
 *.zip
 /tmp
-*/__pycache__/
+*.pyc
+*.xlsx
+*.csv

@@ -163,7 +163,7 @@ if __name__ == '__main__':
     print(f"开始解析step文件")
     start_time = time.perf_counter()
     # step_model_explore2()
-    parse_step_to_csv('data/step/C3-JD-26_1.step')
+    parse_step_to_csv('data/step/C3-JD-27_1.step')
 
     end_time = time.perf_counter()
     duration = end_time-start_time
