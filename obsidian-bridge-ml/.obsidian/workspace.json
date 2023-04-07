@@ -8,18 +8,43 @@
         "type": "tabs",
         "children": [
           {
-            "id": "c5d1e2de56e5ec42",
+            "id": "0c2810ce9b060a61",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "解析step文件，提取特征.md",
+                "file": "论文笔记/PolyGen.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "e7c93fdfd94ee36a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "数据集/ModelNet.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "f39f69cb9e8d96a4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "数据集/Fusion 360 Gallery.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -48,7 +73,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "点云模型",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -85,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "解析step文件，提取特征.md",
+                "file": "数据集/Fusion 360 Gallery.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "解析step文件，提取特征.md",
+                "file": "数据集/Fusion 360 Gallery.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "解析step文件，提取特征.md"
+                "file": "数据集/Fusion 360 Gallery.md"
               }
             }
           }
@@ -146,11 +171,21 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "c5d1e2de56e5ec42",
+  "active": "f39f69cb9e8d96a4",
   "lastOpenFiles": [
+    "数据集/ModelNet.md",
+    "数据集/Fusion 360 Gallery.md",
+    "论文笔记/BRepNet.md",
+    "论文笔记/PolyGen.md",
+    "论文笔记/刘子舜. 使用卷积网络估计三维形状的正朝向.中国科学技术大学,2016..md",
+    "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
+    "tekla 报告导出特征.md",
+    "点云模型.md",
+    "3D模型-数据集.md",
+    "数据集",
+    "论文笔记",
     "模型选择.md",
     "解析step文件，提取特征.md",
-    "tekla 报告导出特征.md",
     "未命名.canvas",
     "2023-03-26.md"
   ]
