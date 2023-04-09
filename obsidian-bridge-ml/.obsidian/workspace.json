@@ -42,9 +42,33 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "80638a0f1e882874",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "论文笔记/Bridge type classification.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "fece2188544014e7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "论文笔记/Bridge type classification.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -110,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "数据集/Fusion 360 Gallery.md",
+                "file": "论文笔记/Bridge type classification.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "数据集/Fusion 360 Gallery.md",
+                "file": "论文笔记/Bridge type classification.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "数据集/Fusion 360 Gallery.md"
+                "file": "论文笔记/Bridge type classification.md"
               }
             }
           }
@@ -171,12 +195,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "f39f69cb9e8d96a4",
+  "active": "fece2188544014e7",
   "lastOpenFiles": [
-    "数据集/ModelNet.md",
-    "数据集/Fusion 360 Gallery.md",
+    "数据集/NBI.md",
+    "论文笔记/Bridge type classification.md",
     "论文笔记/BRepNet.md",
     "论文笔记/PolyGen.md",
+    "数据集/Fusion 360 Gallery.md",
+    "数据集/ModelNet.md",
     "论文笔记/刘子舜. 使用卷积网络估计三维形状的正朝向.中国科学技术大学,2016..md",
     "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
     "tekla 报告导出特征.md",
