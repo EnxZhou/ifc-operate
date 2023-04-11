@@ -18,21 +18,8 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "6505a8b1a1993d4b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "数据集/MFCAD.md",
-                "mode": "source",
-                "source": false
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -98,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "数据集/MFCAD.md",
+                "file": "开源项目/MFCAD.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "数据集/MFCAD.md",
+                "file": "开源项目/MFCAD.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "数据集/MFCAD.md"
+                "file": "开源项目/MFCAD.md"
               }
             }
           }
@@ -159,28 +146,28 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "6505a8b1a1993d4b",
+  "active": "55f179cb04fc8e49",
   "lastOpenFiles": [
-    "数据集/NBI.md",
+    "tekla 报告导出特征.md",
+    "解析step文件，提取特征.md",
+    "模型选择.md",
+    "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
+    "数据集/MFCAD.md",
+    "论文笔记/PolyGen.md",
     "论文笔记/UV-Net.md",
+    "论文笔记/BRepNet.md",
     "论文笔记/Graph representation of 3D cad models for machining feature recognition with deep learning.md",
     "开源项目/MFCAD.md",
-    "数据集/MFCAD.md",
+    "数据集/NBI.md",
     "开源项目",
-    "论文笔记/PolyGen.md",
     "论文笔记/Bridge type classification.md",
-    "论文笔记/BRepNet.md",
     "数据集/Fusion 360 Gallery.md",
     "数据集/ModelNet.md",
     "论文笔记/刘子舜. 使用卷积网络估计三维形状的正朝向.中国科学技术大学,2016..md",
-    "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
-    "tekla 报告导出特征.md",
     "点云模型.md",
     "3D模型-数据集.md",
     "数据集",
     "论文笔记",
-    "模型选择.md",
-    "解析step文件，提取特征.md",
     "未命名.canvas",
     "2023-03-26.md"
   ]

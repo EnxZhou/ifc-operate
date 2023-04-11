@@ -16,7 +16,11 @@ class IfcFile:
     def update_guid_name(self):
         self.get_instance_by_type("IfcBuildingElement")
         for inst in self.instances:
-            inst.Name = inst.Name + "_" + inst.Tag
+            try:
+                inst.Name = inst.Name + "_" + inst.Tag
+            except:
+                print("name:",inst.Name,"tag:",inst.Tag,"failed")
+                continue
 
     def save_file(self, new_file_name):
         self.file.write(new_file_name)

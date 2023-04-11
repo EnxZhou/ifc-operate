@@ -31,9 +31,9 @@ def Preprocess1():
 
     serial_df = pd.melt(data,
                         value_vars=serial_feature)  # 将连续型变量融合在一个dataframe中
-    # show.distplot(serial_df)
-    # show.numerical_cor(data[numerical_feature])
-    # show.boxplot(serial_df)
+    show.distplot(serial_df)
+    show.numerical_cor(data[numerical_feature])
+    show.boxplot(serial_df)
     # nan_rows = data[data.isna().any(axis=1)]
 
     data.dropna(inplace=True)
@@ -230,17 +230,21 @@ def split_train_test(data, label_name):
 
 
 def main():
+    # Preprocess1()
     X_train, y_train, X_test, y_test = PreprocessData()
+
+    # 就利用GBDT模型进行训练，并取出特征名称
     feature_names = X_train.columns.tolist()
-    # clf = GBDTModel(n_features=17)
-    # clf.train(X_train, y_train)
+    clf = GBDTModel(n_features=8,feature_names=feature_names)
+    clf.train(X_train, y_train)
+
+    # 将训练出的模型，保存在本地
     # clf.save('GBDT_model.pkl')
+    # clf = GBDTModel(n_features=17,feature_names=feature_names)
+    # clf.load('GBDT_model.pkl')
 
-    clf = GBDTModel(n_features=17,feature_names=feature_names)
-    clf.load('GBDT_model.pkl')
+    # 输出每项特征所占权重
     scores = clf.score_features(X_test,y_test)
-    print(scores)
-
 
     # y_pred = clf.predict(test_data)
     # nowTime = time.strftime('%Y%m%d-%H%M%S')
@@ -248,7 +252,7 @@ def main():
     # sub_df['result'] = y_pred[:]
     # sub_df.to_csv('./result-' + nowTime + '.csv', index=False)
 
-    # Train2(X_train, y_label)
+    # Train2(X_train, y_train)
 
 
 if __name__ == '__main__':

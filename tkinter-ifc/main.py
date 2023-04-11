@@ -139,19 +139,15 @@ def modifyIfcFile(file_path):
     new_file_name = file_name+"_1"+file_ext
     ifc_file = parseIfc.IfcFile(file_path)
     ifc_file.update_guid_name()
-    ifc_file.save_file(new_file_name)
+    return ifc_file
 
 
 def test3():
-    start = 24
-    end = 33
-    input_list = []
-    for i in range(start, end + 1):
-        input_list.append("C3-JD-" + str(i).zfill(2) + ".ifc")
+    ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
 
-    for f in input_list:
-        modifyIfcFile(f)
-
+    newfile = modifyIfcFile(ifc_file_path)
+    newFileName = SaveFileAs(".ifc")
+    newfile.save_file(newFileName)
 
 if __name__ == '__main__':
     test3()
