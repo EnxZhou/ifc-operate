@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "开源项目/MFCAD.md",
+                "file": "论文笔记/UV-Net.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "开源项目/MFCAD.md",
+                "file": "论文笔记/UV-Net.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "开源项目/MFCAD.md",
+                "file": "论文笔记/UV-Net.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "开源项目/MFCAD.md"
+                "file": "论文笔记/UV-Net.md"
               }
             }
           }
@@ -148,6 +148,7 @@
   },
   "active": "55f179cb04fc8e49",
   "lastOpenFiles": [
+    "开源项目/MFCAD.md",
     "tekla 报告导出特征.md",
     "解析step文件，提取特征.md",
     "模型选择.md",
@@ -157,7 +158,6 @@
     "论文笔记/UV-Net.md",
     "论文笔记/BRepNet.md",
     "论文笔记/Graph representation of 3D cad models for machining feature recognition with deep learning.md",
-    "开源项目/MFCAD.md",
     "数据集/NBI.md",
     "开源项目",
     "论文笔记/Bridge type classification.md",

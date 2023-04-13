@@ -99,23 +99,23 @@ def Train1(mean_X_train, y_label):
         n_estimators=2000, subsample=1, colsample_bytree=1,
     )
 
-    X_train = mean_X_train
+    # X_train = mean_X_train
     # y_train = y_label
-    # xgboost_clf.fit(X_train, y_train)
+    xgboost_clf.fit(X_train, y_train)
     GBDT_clf.fit(X_train, y_train)
-    # Tree_clf.fit(X_train, y_train)
-    # RFC_clf.fit(X_train, y_train)
-    # model_lgb.fit(X_train, y_train)
+    Tree_clf.fit(X_train, y_train)
+    RFC_clf.fit(X_train, y_train)
+    model_lgb.fit(X_train, y_train)
 
     # K折交叉检验
-    # K_model_list = [Tree_clf, GBDT_clf, xgboost_clf, RFC_clf, model_lgb]
-    K_model_list = [GBDT_clf]
+    K_model_list = [Tree_clf, GBDT_clf, xgboost_clf, RFC_clf, model_lgb]
+    # K_model_list = [GBDT_clf]
     K_result = pd.DataFrame()
     for i, val in enumerate(K_model_list):
-        score = cross_validate(val, X_train, y_train, cv=6, scoring='accuracy')
+        score = cross_validate(val, X_test, y_test, cv=6, scoring='accuracy')
         K_result.loc[i, 'accuracy'] = score['test_score'].mean()
-    # K_result.index = pd.Series(['Tree', 'GBDT', 'XGBoost', 'RFC', 'lgb'])
-    K_result.index = pd.Series(['GBDT'])
+    K_result.index = pd.Series(['Tree', 'GBDT', 'XGBoost', 'RFC', 'lgb'])
+    # K_result.index = pd.Series(['GBDT'])
     print(K_result)
 
 
@@ -149,6 +149,35 @@ def Train2(mean_X_train, y_label):
     print(f"Recall: {recall:.4f}")
     print(f"F1-score: {f1:.4f}")
 
+
+@timer
+def Train3(X_train, y_train,X_test,y_test):
+    from sklearn.ensemble import GradientBoostingClassifier
+    from sklearn.model_selection import train_test_split, cross_validate
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+    # 划分数据集为测试集和训练集
+
+    GBDT_param = {
+        'loss': 'log_loss',
+        'learning_rate': 0.1,
+        'n_estimators': 30,
+        'max_depth': 3,
+        'min_samples_split': 300
+    }
+    GBDT_clf = GradientBoostingClassifier()
+    GBDT_clf.fit(X_train, y_train)
+
+    # 使用测试集来评估模型性能
+    y_pred = GBDT_clf.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred, average='macro')
+    recall = recall_score(y_test, y_pred, average='macro')
+    f1 = f1_score(y_test, y_pred, average='macro')
+
+    print(f"Accuracy: {acc:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall: {recall:.4f}")
+    print(f"F1-score: {f1:.4f}")
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import SelectKBest
@@ -194,9 +223,9 @@ class GBDTModel:
 @timer
 def PreprocessData():
     label_name = 'class'
-    train_data = pd.read_csv('tekla-C3-JD-24_26-name_to_class.csv')
+    train_data = pd.read_csv('dataset/123train-3test/no-xyz-train.csv')
     train_data.dropna(inplace=True)
-    test_data = pd.read_csv('tekla-C3-JD-27-name_to_class-test.csv')
+    test_data = pd.read_csv('dataset/123train-3test/no-xyz-test.csv')
     test_data.dropna(inplace=True)
     # remove class in test_data, to predict class
     train_object_feature = list(train_data.select_dtypes(include=['object']).columns)
@@ -244,7 +273,7 @@ def main():
     # clf.load('GBDT_model.pkl')
 
     # 输出每项特征所占权重
-    scores = clf.score_features(X_test,y_test)
+    # scores = clf.score_features(X_test,y_test)
 
     # y_pred = clf.predict(test_data)
     # nowTime = time.strftime('%Y%m%d-%H%M%S')
@@ -252,7 +281,9 @@ def main():
     # sub_df['result'] = y_pred[:]
     # sub_df.to_csv('./result-' + nowTime + '.csv', index=False)
 
+    Train1(X_train, y_train)
     # Train2(X_train, y_train)
+    # Train3(X_train, y_train,X_test,y_test)
 
 
 if __name__ == '__main__':
