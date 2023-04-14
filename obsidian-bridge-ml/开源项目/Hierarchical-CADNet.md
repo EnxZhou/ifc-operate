@@ -1,0 +1,2 @@
+This project provides a deep learning approach to learn machining features from CAD models using a hierarchical graph convolutional neural network.
+https://gitlab.com/qub_femg/machine-learning/hierarchical-cadnet
