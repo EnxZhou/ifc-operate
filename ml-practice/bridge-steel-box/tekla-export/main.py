@@ -3,74 +3,34 @@ import time
 from decorators import timer
 import numpy as np
 import preprocess.show as show
-from sklearn.preprocessing import LabelEncoder
-
-
-@timer
-def Preprocess1():
-    data = pd.read_csv('tekla-C3-JD-24_26-name_to_class.csv')
-    numerical_feature = list(data.select_dtypes(exclude=['object']).columns)  # 数值型变量
-
-    object_feature = list(data.select_dtypes(include=['object']).columns)
-
-    # show_object_col(data)
-    # 连续型变量
-    serial_feature = []
-    # 离散型变量
-    discrete_feature = []
-    # 单值变量
-    unique_feature = []
-    for feature in numerical_feature:
-        temp = data[feature].nunique()  # 返回数据去重后的个数
-        if temp == 1:
-            unique_feature.append(feature)
-        elif 1 < temp <= 10:
-            discrete_feature.append(feature)
-        else:
-            serial_feature.append(feature)
-
-    serial_df = pd.melt(data,
-                        value_vars=serial_feature)  # 将连续型变量融合在一个dataframe中
-    show.distplot(serial_df)
-    show.numerical_cor(data[numerical_feature])
-    show.boxplot(serial_df)
-    # nan_rows = data[data.isna().any(axis=1)]
-
-    data.dropna(inplace=True)
-
-    le = LabelEncoder()
-    label = le.fit_transform(data['class'])
-    data.drop(object_feature, axis=1, inplace=True)
-    data["class"] = label
-
-    train_data = data[data['class'].notnull()]
-    test_data = data[data['class'].isnull()]
-    X_train = train_data.copy()
-    X_train.drop(['class'], axis=1, inplace=True)
-    y_label = train_data['class']
-    return X_train, y_label, test_data
-
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
 @timer
-def Train1(mean_X_train, y_label):
+def Train1(input_X_train, input_y_train, input_X_test,
+           input_y_test):
     from sklearn.ensemble import GradientBoostingClassifier
-    from sklearn.model_selection import train_test_split, cross_validate
+    from sklearn.model_selection import train_test_split, cross_validate, KFold
     from sklearn.tree import DecisionTreeClassifier
     import xgboost
     import lightgbm as lgb
     from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import accuracy_score
     # 划分数据集为测试集和训练集
-    X_train, X_test, y_train, y_test = train_test_split(mean_X_train, y_label, train_size=0.7)
-    # print(X_train.shape)
+    if input_X_test.empty:
+        X_train, X_test, y_train, y_test = \
+            train_test_split(input_X_train, input_y_train, train_size=0.7)
+    else:
+        X_train, X_test, y_train, y_test = \
+            input_X_train, input_X_test, input_y_train, input_y_test
     # 集合算法树模型
     GBDT_param = {
         'loss': 'log_loss',
         'learning_rate': 0.1,
         'n_estimators': 30,
-        'max_depth': 3,
+        'max_depth': 30,
         'min_samples_split': 300
     }
-    GBDT_clf = GradientBoostingClassifier()  # GBDT模型
+    GBDT_clf = GradientBoostingClassifier(**GBDT_param)  # GBDT模型
 
     tree_param = {
         'criterion': 'gini',
@@ -84,7 +44,7 @@ def Train1(mean_X_train, y_label):
     xgboost_param = {
         'learning_rate': 0.01,
         'reg_alpha': 0.,
-        'max_depth': 3,
+        'max_depth': 30,
         'gamma': 0,
         'min_child_weight': 1
 
@@ -109,13 +69,18 @@ def Train1(mean_X_train, y_label):
 
     # K折交叉检验
     K_model_list = [Tree_clf, GBDT_clf, xgboost_clf, RFC_clf, model_lgb]
-    # K_model_list = [GBDT_clf]
+    kFold = KFold(n_splits=6, shuffle=True, random_state=2)
     K_result = pd.DataFrame()
     for i, val in enumerate(K_model_list):
-        score = cross_validate(val, X_test, y_test, cv=6, scoring='accuracy')
-        K_result.loc[i, 'accuracy'] = score['test_score'].mean()
+        score = cross_validate(val, X_train, y_train, cv=kFold, scoring='accuracy',
+                               error_score='raise')
+        K_result.loc[i, 'cross_accuracy'] = score['test_score'].mean()
+        K_result.loc[i, 'cross_stand'] = score['test_score'].std()
+
+        y_pred = val.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        K_result.loc[i, 'predict_accuracy'] = accuracy
     K_result.index = pd.Series(['Tree', 'GBDT', 'XGBoost', 'RFC', 'lgb'])
-    # K_result.index = pd.Series(['GBDT'])
     print(K_result)
 
 
@@ -151,7 +116,7 @@ def Train2(mean_X_train, y_label):
 
 
 @timer
-def Train3(X_train, y_train,X_test,y_test):
+def Train3(X_train, y_train, X_test, y_test):
     from sklearn.ensemble import GradientBoostingClassifier
     from sklearn.model_selection import train_test_split, cross_validate
     from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -179,6 +144,7 @@ def Train3(X_train, y_train,X_test,y_test):
     print(f"Recall: {recall:.4f}")
     print(f"F1-score: {f1:.4f}")
 
+
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import SelectKBest
 from sklearn.ensemble import GradientBoostingClassifier
@@ -196,7 +162,7 @@ class GBDTModel:
     def score_features(self, X, y):
         scores = f_classif(X, y)[0]
         if self.feature_names:
-            feature_dict = dict(zip(self.feature_names,scores))
+            feature_dict = dict(zip(self.feature_names, scores))
             for name, score in feature_dict.items():
                 print(f"{name}: {score}")
         return scores
@@ -222,31 +188,50 @@ class GBDTModel:
 
 @timer
 def PreprocessData():
-    label_name = 'class'
-    train_data = pd.read_csv('dataset/123train-3test/no-xyz-train.csv')
-    train_data.dropna(inplace=True)
-    test_data = pd.read_csv('dataset/123train-3test/no-xyz-test.csv')
-    test_data.dropna(inplace=True)
+    xyz_feature = ['cog_x', 'cog_y', 'cog_z', 'box_minx', 'box_miny', 'box_minz', 'box_maxx', 'box_maxy', 'box_maxz']
+    label_name = 'new-class'
+
+    file_path = 'dataset/new-label/12train-3test/with-xyz/'
+    train_data = pd.read_csv(file_path+'train.csv')
+    # 分别删除na值，可以防止将’is_train‘标识删掉
+    # train_data.dropna(inplace=True)
+    test_data = pd.read_csv(file_path + 'test.csv')
+    # test_data.dropna(inplace=True)
+    train_data['is_train']=True
+    test_data['is_train']=False
+    data = pd.concat([train_data, test_data])
+    data.dropna(inplace=True)
+
+    data_groups = data.groupby('segment_no')
+
+    scaler = MinMaxScaler()
+    for segment_no, group in data_groups:
+        data.loc[group.index, xyz_feature] = scaler.fit_transform(group[xyz_feature])
+
+
     # remove class in test_data, to predict class
-    train_object_feature = list(train_data.select_dtypes(include=['object']).columns)
-    test_object_feature = list(test_data.select_dtypes(include=['object']).columns)
+    # test_object_feature = list(test_data.select_dtypes(include=['object']).columns)
+
+    # le = LabelEncoder()
+    # train_label = le.fit_transform(train_data[label_name])
+    # train_data.drop(train_object_feature, axis=1, inplace=True)
+    #
+    # test_label = le.transform(test_data[label_name])
+    # test_data.drop(test_object_feature, axis=1, inplace=True)
 
     le = LabelEncoder()
-    train_label = le.fit_transform(train_data[label_name])
-    train_data.drop(train_object_feature, axis=1, inplace=True)
+    label = le.fit_transform(data[label_name])
+    object_feature = list(data.select_dtypes(include=['object']).columns)
+    data.drop(object_feature, axis=1, inplace=True)
+    data[label_name] = label
 
-    test_label = le.fit_transform(test_data[label_name])
-    test_data.drop(test_object_feature, axis=1, inplace=True)
-
-    X_train = train_data
-    y_train = train_label
-    X_test = test_data
-    y_test = test_label
-    # 数据集切分
-    # X_train, y_train, X_test = split_train_test(data, label_name)
+    train_data = data[data['is_train'].notnull()]
+    test_data = data[data['is_train'].isnull()]
+    X_train = train_data.drop(label_name, axis=1, inplace=True)
+    y_train = train_data[label_name]
+    X_test = test_data.drop(label_name, axis=1, inplace=True)
+    y_test = test_data[label_name]
     return X_train, y_train, X_test, y_test
-
-
 
 
 def split_train_test(data, label_name):
@@ -264,7 +249,7 @@ def main():
 
     # 就利用GBDT模型进行训练，并取出特征名称
     feature_names = X_train.columns.tolist()
-    clf = GBDTModel(n_features=8,feature_names=feature_names)
+    clf = GBDTModel(n_features=8, feature_names=feature_names)
     clf.train(X_train, y_train)
 
     # 将训练出的模型，保存在本地
@@ -286,5 +271,10 @@ def main():
     # Train3(X_train, y_train,X_test,y_test)
 
 
+def testModel():
+    X_train, y_train, X_test, y_test = PreprocessData()
+    Train1(X_train, y_train, X_test, y_test)
+
+
 if __name__ == '__main__':
-    main()
+    testModel()
