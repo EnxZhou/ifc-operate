@@ -13,19 +13,19 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "钢箱梁特征定义.md",
+                "file": "模型选择.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "f0af0044e813a435",
+            "id": "2e710abbd0d81439",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "论文笔记/Machine Learning for Risk and Resilience Assessment in Structural Engineering- Progress and Future Trends.md",
+                "file": "occ-step聚类.md",
                 "mode": "source",
                 "source": false
               }
@@ -44,7 +44,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "钢箱梁特征定义.md",
+                "file": "occ-step聚类.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "钢箱梁特征定义.md",
+                "file": "occ-step聚类.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "钢箱梁特征定义.md"
+                "file": "occ-step聚类.md"
               }
             }
           }
@@ -171,12 +171,15 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "1080ab01883d9c02",
+  "active": "2e710abbd0d81439",
   "lastOpenFiles": [
+    "模型选择.md",
+    "occ-step聚类.md",
+    "解析step文件，提取特征.md",
+    "tekla 报告导出特征.md",
+    "钢箱梁特征定义.md",
     "论文笔记/Machine Learning for Risk and Resilience Assessment in Structural Engineering- Progress and Future Trends.md",
     "论文笔记/Application of machine learning in bridge engineering-A state-of-the-art review.md",
-    "钢箱梁特征定义.md",
-    "模型选择.md",
     "论文笔记/DeepCAD.md",
     "数据集/DeepCAD.md",
     "开源项目/DeepCAD.md",
@@ -187,8 +190,6 @@
     "论文笔记/Graph representation of 3D cad models for machining feature recognition with deep learning.md",
     "数据集/MFCAD.md",
     "论文笔记/UV-Net.md",
-    "tekla 报告导出特征.md",
-    "解析step文件，提取特征.md",
     "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
     "论文笔记/BRepNet.md",
     "数据集/NBI.md",
@@ -201,7 +202,6 @@
     "3D模型-数据集.md",
     "数据集",
     "论文笔记",
-    "未命名.canvas",
-    "2023-03-26.md"
+    "未命名.canvas"
   ]
 }

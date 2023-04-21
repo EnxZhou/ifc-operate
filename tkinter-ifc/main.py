@@ -83,8 +83,6 @@ def get_structural_storey(_id, ifc_file):
 
 def test1():
     # ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
-    # ifc_file_path = "./two_plate.ifc"
-    # ifc_file_path = "./tekla-2019-C3-JD-31-DB-252.ifc"
     ifc_file_path = "./segment.ifc"
 
     ifc_file = ifc.open(ifc_file_path)
