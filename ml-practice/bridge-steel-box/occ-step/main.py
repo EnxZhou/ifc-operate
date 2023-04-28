@@ -270,34 +270,28 @@ def Train2(input_X_train, input_y_train, input_X_test,
 def AP_train(data):
     from sklearn.cluster import AffinityPropagation
     from sklearn.cluster import AgglomerativeClustering
+    from sklearn.cluster import KMeans
     has_nan = data.isna().any().any()
     if has_nan:
         print('数据存在NaN')
         return
 
-    for preference in np.linspace(-50,-30,21):
-        af_clf = AffinityPropagation(preference=preference)
-        af_clf.fit(data)
-        cluster_centers_indices = af_clf.cluster_centers_indices_
-        labels = af_clf.labels_
-        n_clusters = len(cluster_centers_indices)
-        print("preference={}, n_clusters={}".format(preference,n_clusters))
+    # for preference in np.linspace(-50,-30,21):
+    #     af_clf = AffinityPropagation(preference=preference)
+    #     af_clf.fit(data)
+    #     cluster_centers_indices = af_clf.cluster_centers_indices_
+    #     labels = af_clf.labels_
+    #     n_clusters = len(cluster_centers_indices)
+    #     print("preference={}, n_clusters={}".format(preference,n_clusters))
 
 
 
-    # agg_clf = AgglomerativeClustering(n_clusters=10, linkage='ward')
-    # agg_clf.fit(data)
-    # labels = agg_clf.labels_
+    clf = KMeans(n_clusters=10, random_state=42)
+    clf.fit(data)
+    labels = clf.labels_
 
-    # af_clf = AffinityPropagation(preference=-50)
-    # af_clf.fit(data)
-    # cluster_centers_indices = af_clf.cluster_centers_indices_
-    # labels = af_clf.labels_
-    # n_clusters = len(cluster_centers_indices)
-    # print("n_clusters={}".format(n_clusters))
-    #
-    # df_labels = pd.DataFrame(labels)
-    # df_labels.to_csv('ap_result.csv', index=False)
+    df_labels = pd.DataFrame(labels)
+    df_labels.to_csv('ap_result.csv', index=False)
 
 
 def main():

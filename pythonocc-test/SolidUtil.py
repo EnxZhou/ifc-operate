@@ -28,6 +28,19 @@ class SolidFeature:
     # 边长总和
     edgeLenSum = 0.0
 
+    def to_dict(self):
+        return {
+            "mass": self.mass,
+            "centreOfMassX": self.centreOfMassX,
+            "centreOfMassY": self.centreOfMassY,
+            "centreOfMassZ": self.centreOfMassZ,
+            "surfaceArea": self.surfaceArea,
+            "faceMassAverage": self.faceMassAverage,
+            "faceMassVariance": self.faceMassVariance,
+            "edgeCount": self.edgeCount,
+            "edgeLenSum": self.edgeLenSum
+        }
+
 
 def get_solids_from_step(file_path):
     stpshp = read_step_file(file_path)
@@ -85,8 +98,8 @@ def get_solid_feature(_solid):
     feature.minFaceFeature = FaceUtil.get_face_props(min_face)
     feature.faceMassAverage = face_mass_average
     feature.faceMassVariance = face_mass_variance
-    feature.edgeLenSum=get_solid_edge_len_sum(_solid)
-    feature.edgeCount=get_solid_edge_count(_solid)
+    feature.edgeLenSum = get_solid_edge_len_sum(_solid)
+    feature.edgeCount = get_solid_edge_count(_solid)
 
     return feature
 
@@ -108,3 +121,27 @@ def get_solid_edge_count(_solid):
     t = TopologyExplorer(_solid)
     edgeCount = t.number_of_edges()
     return edgeCount
+
+
+def hasSharedFace(_solid1, _solid2):
+    # 定义一个空的共享面列表
+    shared_faces = []
+
+    # 遍历 solid1 的所有面
+    solid1FaceList = FaceUtil.get_faces_from_solid(_solid1)
+    solid2FaceList = FaceUtil.get_faces_from_solid(_solid2)
+    for face1 in solid1FaceList:
+        # 遍历 solid2 的所有面
+        for face2 in solid2FaceList:
+            # 判断 face1 和 face2 是否相同
+            if face1.IsSame(face2):
+                # 如果相同，说明这是一个共享面
+                shared_faces.append(face1)
+
+    # 如果共享面列表不为空，则说明 solid1 和 solid2 有共享面
+    if shared_faces:
+        print("Solid1 and Solid2 share the following faces:")
+        for face in shared_faces:
+            print(face)
+    else:
+        print("Solid1 and Solid2 do not share any faces.")

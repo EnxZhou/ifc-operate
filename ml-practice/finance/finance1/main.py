@@ -2,7 +2,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 def Finance1():
     train = pd.read_csv('train.csv')
     test = pd.read_csv('test.csv')

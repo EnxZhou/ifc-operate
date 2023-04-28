@@ -20,6 +20,7 @@ from OCC.Core.GeomAbs import (
 )
 from OCC.Core.gp import gp_Pnt, gp_Dir
 from OCC.Extend.TopologyUtils import TopologyExplorer
+from OCC.Core.BRepTools import breptools_UVBounds
 
 import EdgeUtil
 
@@ -92,6 +93,21 @@ class FaceFeature:
     #            f"maxEdgeFeature: {self.maxEdgeFeature}, minEdgeFeature: {self.minEdgeFeature}, " \
     #            f"edgeLengthAverage: {self.edgeLengthAverage}, edgeLengthVariance: {self.edgeLengthVariance}"
 
+class FaceFeature2:
+    kind = ""
+    mass = 0.0
+    centreOfMassX = 0.0
+    centreOfMassY = 0.0
+    centreOfMassZ = 0.0
+    axisLocationX = 0.0
+    axisLocationY = 0.0
+    axisLocationZ = 0.0
+    axisDirectX = 0.0
+    axisDirectY = 0.0
+    axisDirectZ = 0.0
+    # 周长
+    perimeter = 0.0
+
 
 # 获取面的属性
 def get_face_props(_face: TopoDS_Face):
@@ -115,7 +131,7 @@ def get_face_props(_face: TopoDS_Face):
 
     edge_list = EdgeUtil.get_edges_from_face(_face)
 
-    # 遍历 Solid 中的每个面，获取面积最大和最小的面
+    # 遍历 face 中的每个edge，获取长度最大和最小的edge
     for edge in edge_list:
         edgeFeature = EdgeUtil.get_edge_props(edge)
         edgeLen = edgeFeature.length

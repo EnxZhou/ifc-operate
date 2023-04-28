@@ -15,6 +15,7 @@ from OCC.Extend.TopologyUtils import TopologyExplorer
 
 import FaceUtil
 import SolidUtil
+import shapeUtil
 
 
 def shape_edges_length(the_shape):
@@ -138,6 +139,32 @@ def parse_step_to_csv(file_name):
     print(f"{file_name}已解析完毕，生成{csv_filename}")
 
 
+def testSolidAdjacent(file_name):
+    stp_name_colors = read_step_file_with_names_colors(file_name)
+    shapes = []
+
+    import networkx as nx
+    from tqdm import tqdm
+    G = nx.Graph()
+
+    for shp in stp_name_colors:
+        shapes.append(shp)
+        shp_name, _ = stp_name_colors[shp]
+        solidProps = SolidUtil.get_solid_feature(shp)
+        shp_attributes = solidProps.to_dict()
+        G.add_nodes_from([(shp_name, shp_attributes)])
+
+    for i in tqdm(range(len(shapes))):
+        shp_name1, _ = stp_name_colors[shapes[i]]
+        for j in tqdm(range(i + 1, len(shapes)), delay=3):
+            shp_name2, _ = stp_name_colors[shapes[j]]
+            if shapeUtil.isShapeAdjacent(shapes[i], shapes[j], 0.001):
+                G.add_edge(shp_name1, shp_name2)
+
+    # nx.write_graphml(G, "data/graphml/test.graphml")
+    nx.write_graphml(G, "data/graphml/C3-JD-24_1.graphml")
+
+
 # 因为是只解析step文件的几何属性，所有只能把自定义属性加在solid的name中，所以name为"模型名称_GUID"
 def parse_name_and_guid(old_name):
     name_pattern = r'[\u4e00-\u9fa5\w]+'
@@ -163,8 +190,10 @@ if __name__ == '__main__':
     print(f"开始解析step文件")
     start_time = time.perf_counter()
     # step_model_explore2()
-    parse_step_to_csv('data/step/C3-JD-27_1.step')
+    # parse_step_to_csv('data/step/C3-JD-27_1.step')
+    testSolidAdjacent('data/step/C3-JD-24_1.step')
+    # testSolidAdjacent('data/step/scw-C3-JD-31-DB-252-freecad.step')
 
     end_time = time.perf_counter()
-    duration = end_time-start_time
+    duration = end_time - start_time
     print(f"执行时间为 {duration:.2f} 秒")
