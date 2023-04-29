@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d8" for="node" attr.name="edgeLenSum" attr.type="double" />
+  <key id="d7" for="node" attr.name="edgeCount" attr.type="long" />
+  <key id="d6" for="node" attr.name="faceMassVariance" attr.type="double" />
+  <key id="d5" for="node" attr.name="faceMassAverage" attr.type="double" />
+  <key id="d4" for="node" attr.name="surfaceArea" attr.type="double" />
+  <key id="d3" for="node" attr.name="centreOfMassZ" attr.type="double" />
+  <key id="d2" for="node" attr.name="centreOfMassY" attr.type="double" />
+  <key id="d1" for="node" attr.name="centreOfMassX" attr.type="double" />
+  <key id="d0" for="node" attr.name="mass" attr.type="double" />
+  <graph edgedefault="undirected">
+    <node id="底板010">
+      <data key="d0">497064094.22263026</data>
+      <data key="d1">681499.9999999673</data>
+      <data key="d2">12379.736074278186</data>
+      <data key="d3">956.6200253115403</data>
+      <data key="d4">83270290.91936547</data>
+      <data key="d5">13878381.819894245</data>
+      <data key="d6">379329262297437.25</data>
+      <data key="d7">12</data>
+      <data key="d8">71093.86876090693</data>
+    </node>
+    <node id="底板009">
+      <data key="d0">66399980.43456843</data>
+      <data key="d1">681499.9999746116</data>
+      <data key="d2">11384.480700034774</data>
+      <data key="d3">919.9945582296948</data>
+      <data key="d4">22316485.423025176</data>
+      <data key="d5">858326.3624240452</data>
+      <data key="d6">1742790456494.2515</data>
+      <data key="d7">72</data>
+      <data key="d8">351076.87141627655</data>
+    </node>
+    <node id="底板008">
+      <data key="d0">66399980.43377604</data>
+      <data key="d1">681499.9999742627</data>
+      <data key="d2">12166.62186314512</data>
+      <data key="d3">1088.087392609969</data>
+      <data key="d4">22316485.42301457</data>
+      <data key="d5">858326.3624236373</data>
+      <data key="d6">1742790456513.0237</data>
+      <data key="d7">72</data>
+      <data key="d8">351076.87141627504</data>
+    </node>
+    <node id="底板007">
+      <data key="d0">66399980.43476226</data>
+      <data key="d1">681499.9999741918</data>
+      <data key="d2">12948.763026253999</data>
+      <data key="d3">1256.180226994443</data>
+      <data key="d4">22316485.422979172</data>
+      <data key="d5">858326.3624222758</data>
+      <data key="d6">1742790456542.0103</data>
+      <data key="d7">72</data>
+      <data key="d8">351076.87141627027</data>
+    </node>
+    <node id="底板006">
+      <data key="d0">46400000.003382206</data>
+      <data key="d1">681500.0</data>
+      <data key="d2">13402.860359662605</data>
+      <data key="d3">1284.923760297002</data>
+      <data key="d4">6270400.000048201</data>
+      <data key="d5">1045066.6666747001</data>
+      <data key="d6">1729113742223.3125</data>
+      <data key="d7">12</data>
+      <data key="d8">58864.0000000066</data>
+    </node>
+    <node id="底板005">
+      <data key="d0">179067.7027063197</data>
+      <data key="d1">674249.9999999986</data>
+      <data key="d2">11385.247713193892</data>
+      <data key="d3">916.4256162225862</data>
+      <data key="d4">96194.9540685632</data>
+      <data key="d5">4372.497912207418</data>
+      <data key="d6">31616248.2091393</data>
+      <data key="d7">60</data>
+      <data key="d8">4207.534354852534</data>
+    </node>
+    <node id="底板004">
+      <data key="d0">179067.70270631966</data>
+      <data key="d1">688750.0000523987</data>
+      <data key="d2">11385.247713193889</data>
+      <data key="d3">916.425616222587</data>
+      <data key="d4">96194.9540685632</data>
+      <data key="d5">4372.497912207418</data>
+      <data key="d6">31616248.2091393</data>
+      <data key="d7">60</data>
+      <data key="d8">4207.534354852534</data>
+    </node>
+    <node id="底板003">
+      <data key="d0">179067.7027080864</data>
+      <data key="d1">674249.999999997</data>
+      <data key="d2">12167.388876302828</data>
+      <data key="d3">1084.518450605285</data>
+      <data key="d4">96194.95406854006</data>
+      <data key="d5">4372.497912206366</data>
+      <data key="d6">31616248.20920917</data>
+      <data key="d7">60</data>
+      <data key="d8">4207.534354852257</data>
+    </node>
+    <node id="底板002">
+      <data key="d0">179067.70270808626</data>
+      <data key="d1">688750.0000523976</data>
+      <data key="d2">12167.388876302819</data>
+      <data key="d3">1084.5184506052844</data>
+      <data key="d4">96194.95406854006</data>
+      <data key="d5">4372.497912206366</data>
+      <data key="d6">31616248.20920917</data>
+      <data key="d7">60</data>
+      <data key="d8">4207.534354852257</data>
+    </node>
+    <node id="底板001">
+      <data key="d0">179067.7026979909</data>
+      <data key="d1">674249.9999999966</data>
+      <data key="d2">12949.530039414529</data>
+      <data key="d3">1252.6112849825163</data>
+      <data key="d4">96194.95406729897</data>
+      <data key="d5">4372.497912149953</data>
+      <data key="d6">31616248.209827602</data>
+      <data key="d7">60</data>
+      <data key="d8">4207.53435485326</data>
+    </node>
+    <node id="底板">
+      <data key="d0">179067.7026979906</data>
+      <data key="d1">688750.0000523969</data>
+      <data key="d2">12949.530039414542</data>
+      <data key="d3">1252.611284982516</data>
+      <data key="d4">96194.95406729897</data>
+      <data key="d5">4372.497912149953</data>
+      <data key="d6">31616248.209827602</data>
+      <data key="d7">60</data>
+      <data key="d8">4207.53435485326</data>
+    </node>
+    <node id="PLATE">
+      <data key="d0">14193.427729519299</data>
+      <data key="d1">674314.4362619005</data>
+      <data key="d2">13655.005863311506</data>
+      <data key="d3">1237.3269404587004</data>
+      <data key="d4">29260.32654650345</data>
+      <data key="d5">3251.147394055939</data>
+      <data key="d6">34214924.6631898</data>
+      <data key="d7">21</data>
+      <data key="d8">1753.9421740281914</data>
+    </node>
+  </graph>
+</graphml>

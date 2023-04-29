@@ -1,6 +1,7 @@
 import csv
 import re
 import time
+import os
 
 import pandas as pd
 from OCC.Core.BRepGProp import brepgprop_LinearProperties, brepgprop_SurfaceProperties, brepgprop_VolumeProperties
@@ -9,7 +10,7 @@ from OCC.Core.BRepGProp import brepgprop_LinearProperties, brepgprop_SurfaceProp
 from OCC.Core.GProp import GProp_GProps
 from OCC.Core.TopAbs import TopAbs_VERTEX
 from OCC.Core.TopExp import TopExp_Explorer
-from OCC.Core.TopoDS import TopoDS_Shape, topods_Vertex
+from OCC.Core.TopoDS import TopoDS_Shape, topods_Vertex,TopoDS_Solid
 from OCC.Extend.DataExchange import read_step_file, read_step_file_with_names_colors
 from OCC.Extend.TopologyUtils import TopologyExplorer
 
@@ -138,13 +139,24 @@ def parse_step_to_csv(file_name):
 
     print(f"{file_name}已解析完毕，生成{csv_filename}")
 
+def step_path_to_graphml_path(file_name):
+    # 获取目录名和文件名
+    dirname, basename = os.path.split(file_name)
+    # 构造新的文件名
+    new_filename = os.path.join(dirname.replace('step', 'graphml'),
+                                basename.replace('step', 'graphml'))
+
+    return new_filename
 
 def testSolidAdjacent(file_name):
+    graphml_path=step_path_to_graphml_path(file_name)
     stp_name_colors = read_step_file_with_names_colors(file_name)
     shapes = []
+    num_of_shp = len(stp_name_colors)
 
     import networkx as nx
     from tqdm import tqdm
+    from multiprocessing import Pool, Manager
     G = nx.Graph()
 
     for shp in stp_name_colors:
@@ -154,15 +166,53 @@ def testSolidAdjacent(file_name):
         shp_attributes = solidProps.to_dict()
         G.add_nodes_from([(shp_name, shp_attributes)])
 
-    for i in tqdm(range(len(shapes))):
+    for i in tqdm(range(num_of_shp), desc='Outer loop', leave=False):
         shp_name1, _ = stp_name_colors[shapes[i]]
-        for j in tqdm(range(i + 1, len(shapes)), delay=3):
+        for j in tqdm(range(i + 1, num_of_shp), desc='Inner loop', leave=True):
             shp_name2, _ = stp_name_colors[shapes[j]]
             if shapeUtil.isShapeAdjacent(shapes[i], shapes[j], 0.001):
                 G.add_edge(shp_name1, shp_name2)
 
+    nx.write_graphml(G, graphml_path)
+
+
+def process_task(i, stp_name_colors, G):
+    shp_name1, _ = stp_name_colors[i]
+    for j in range(i + 1, len(stp_name_colors)):
+        shp_name2, _ = stp_name_colors[j]
+        if shapeUtil.isShapeAdjacent(stp_name_colors[i], stp_name_colors[j], 0.001):
+            G.add_edge(shp_name1, shp_name2)
+
+
+def multi_step_to_graph(file_name):
+    stp_name_colors = read_step_file_with_names_colors(file_name)
+    # shapes = []
+    num_of_shp = len(stp_name_colors)
+
+    import networkx as nx
+    from tqdm import tqdm
+    from multiprocessing import Pool, Manager
+    G = nx.Graph()
+
+    for shp in stp_name_colors:
+        # shapes.append(shp)
+        shp_name, _ = stp_name_colors[shp]
+        solidProps = SolidUtil.get_solid_feature(shp)
+        shp_attributes = solidProps.to_dict()
+        G.add_nodes_from([(shp_name, shp_attributes)])
+
+    with Manager() as manager:
+        pool = Pool(processes=4)
+        G_shared = manager.Value(nx.Graph,G)
+        stp_name_colors_shared = manager.dict(stp_name_colors)
+        tasks = [(i, stp_name_colors_shared, G_shared) for i in range(num_of_shp)]
+        for _ in tqdm(pool.imap_unordered(process_task, tasks), total=len(tasks), desc='Outer loop'):
+            pass
+        pool.close()
+        pool.join()
+
     # nx.write_graphml(G, "data/graphml/test.graphml")
-    nx.write_graphml(G, "data/graphml/C3-JD-24_1.graphml")
+    nx.write_graphml(G_shared.value, "data/graphml/1.graphml")
 
 
 # 因为是只解析step文件的几何属性，所有只能把自定义属性加在solid的name中，所以name为"模型名称_GUID"
@@ -191,8 +241,8 @@ if __name__ == '__main__':
     start_time = time.perf_counter()
     # step_model_explore2()
     # parse_step_to_csv('data/step/C3-JD-27_1.step')
-    testSolidAdjacent('data/step/C3-JD-24_1.step')
     # testSolidAdjacent('data/step/scw-C3-JD-31-DB-252-freecad.step')
+    testSolidAdjacent('data/step/NXJ4-NXZ_8_1.step')
 
     end_time = time.perf_counter()
     duration = end_time - start_time

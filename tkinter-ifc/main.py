@@ -2,9 +2,9 @@
 import os.path
 
 import ifcopenshell as ifc
+import tkinter as tk
 from tkinter.filedialog import askopenfilename
-from tkinter.filedialog import asksaveasfilename
-import pandas as pd
+from tkinter.filedialog import asksaveasfilename, askopenfilenames
 
 import parseIfc
 
@@ -132,20 +132,65 @@ def test1():
 # writer.save()
 
 
-def modifyIfcFile(file_path):
-    file_name,file_ext = os.path.splitext(os.path.basename(file_path))
-    new_file_name = file_name+"_1"+file_ext
+def mergeNameGuid(file_path):
+    # file_name, file_ext = os.path.splitext(os.path.basename(file_path))
+    # new_file_name = file_name + "_1" + file_ext
     ifc_file = parseIfc.IfcFile(file_path)
     ifc_file.update_guid_name()
     return ifc_file
 
 
+def addGuidToName(old_file_path, new_file_path):
+    old_file = ifc.open(old_file_path)
+    instances = old_file.by_type("IfcBuildingElement")
+    for inst in instances:
+        try:
+            inst.Name = inst.Name + "_" + inst.Tag
+        except:
+            print("name:", inst.Name, "tag:", inst.Tag, "failed")
+            continue
+    old_file.write(new_file_path)
+
+
 def test3():
     ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
 
-    newfile = modifyIfcFile(ifc_file_path)
+    newfile = mergeNameGuid(ifc_file_path)
     newFileName = SaveFileAs(".ifc")
     newfile.save_file(newFileName)
 
-if __name__ == '__main__':
-    test3()
+
+def browse_files():
+    file_list = askopenfilenames()
+    file_var.set(file_list)
+
+
+def process_files():
+    file_var_str = file_var.get()
+    file_list = [file.strip().strip("'") for file in file_var_str[1:-1].split(",")]
+    for file in file_list:
+        file_path, file_name = os.path.split(file)
+        file_base, file_ext = os.path.splitext(file_name)
+        new_file_name = file_base + "_1" + file_ext
+        new_file_path = os.path.join(file_path, new_file_name)
+        addGuidToName(file, new_file_path)
+
+
+# def tryTkinter():
+root = tk.Tk()
+root.title("将ifc中GUID合并至name")
+file_var = tk.StringVar()
+
+browse_button = tk.Button(root, text="选择文件", command=browse_files)
+browse_button.pack()
+
+process_button = tk.Button(root, text="处理文件", command=process_files)
+process_button.pack()
+
+file_label = tk.Label(root, textvariable=file_var)
+file_label.pack()
+
+root.mainloop()
+
+# if __name__ == '__main__':
+#     tryTkinter()

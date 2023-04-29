@@ -30,3 +30,5 @@ out/
 /tmp
 *.pyc
 *.xlsx
+**/build/
+**/dist/
