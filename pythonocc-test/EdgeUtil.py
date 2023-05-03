@@ -59,3 +59,10 @@ def get_edges_from_face(_face: TopoDS_Face):
     for edge in t.edges():
         edgeList.append(edge)
     return edgeList
+
+
+# 获取面的边个数
+def get_edge_count_of_face(_face: TopoDS_Face):
+    t = TopologyExplorer(_face)
+    edgeCount = t.number_of_edges()
+    return edgeCount

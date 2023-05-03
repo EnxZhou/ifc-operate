@@ -142,5 +142,22 @@
       <data key="d7">21</data>
       <data key="d8">1753.9421740281914</data>
     </node>
+    <edge source="底板010" target="底板009" />
+    <edge source="底板010" target="底板008" />
+    <edge source="底板010" target="底板007" />
+    <edge source="底板010" target="底板006" />
+    <edge source="底板010" target="底板005" />
+    <edge source="底板010" target="底板004" />
+    <edge source="底板010" target="底板003" />
+    <edge source="底板010" target="底板002" />
+    <edge source="底板010" target="底板001" />
+    <edge source="底板010" target="底板" />
+    <edge source="底板010" target="PLATE" />
+    <edge source="底板009" target="底板005" />
+    <edge source="底板009" target="底板004" />
+    <edge source="底板008" target="底板003" />
+    <edge source="底板008" target="底板002" />
+    <edge source="底板007" target="底板001" />
+    <edge source="底板007" target="底板" />
   </graph>
 </graphml>

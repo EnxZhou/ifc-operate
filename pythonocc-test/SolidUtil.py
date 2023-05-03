@@ -42,6 +42,52 @@ class SolidFeature:
         }
 
 
+# 体节点
+class SolidNode:
+    mass = 0.0
+    centreOfMassX = 0.0
+    centreOfMassY = 0.0
+    centreOfMassZ = 0.0
+    faceCount = 0
+
+    def to_dict(self):
+        return {
+            "mass": self.mass,
+            "centreOfMassX": self.centreOfMassX,
+            "centreOfMassY": self.centreOfMassY,
+            "centreOfMassZ": self.centreOfMassZ,
+            "faceCount": self.faceCount,
+        }
+
+    def to_list(self):
+        return [self.mass,
+                self.centreOfMassX,
+                self.centreOfMassY,
+                self.centreOfMassZ,
+                self.faceCount]
+
+
+def get_solid_node(_solid):
+    props = GProp_GProps()
+    # 创建计算几何属性对象
+    brepgprop_VolumeProperties(_solid, props)
+    # 计算重量和重心
+    mass = props.Mass()
+    centre_of_mass = props.CentreOfMass()
+    # 获取面个数
+    face_count = FaceUtil.get_face_count_of_solid(_solid)
+
+    # 创建 SolidNode 对象
+    feature = SolidNode()
+    feature.mass = mass
+    feature.centreOfMassX = centre_of_mass.X()
+    feature.centreOfMassY = centre_of_mass.Y()
+    feature.centreOfMassZ = centre_of_mass.Z()
+    feature.faceCount = face_count
+
+    return feature
+
+
 def get_solids_from_step(file_path):
     stpshp = read_step_file(file_path)
 

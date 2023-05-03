@@ -13,3 +13,7 @@ def isShapeAdjacent(shape1, shape2, tolerance):
         return True
     else:
         return False
+
+def distOfShape(shape1, shape2):
+    dist = BRepExtrema_DistShapeShape(shape1, shape2)
+    return dist
