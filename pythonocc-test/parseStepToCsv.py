@@ -8,9 +8,11 @@ from OCC.Core.BRepGProp import brepgprop_LinearProperties, brepgprop_SurfaceProp
 from OCC.Core.BRep import BRep_Tool
 from OCC.Core.BRepGProp import brepgprop_LinearProperties, brepgprop_SurfaceProperties, brepgprop_VolumeProperties
 from OCC.Core.GProp import GProp_GProps
+from OCC.Core.IFSelect import IFSelect_RetDone
+from OCC.Core.STEPControl import STEPControl_Reader, STEPControl_Writer, STEPControl_ManifoldSolidBrep
 from OCC.Core.TopAbs import TopAbs_VERTEX
 from OCC.Core.TopExp import TopExp_Explorer
-from OCC.Core.TopoDS import TopoDS_Shape, topods_Vertex,TopoDS_Solid
+from OCC.Core.TopoDS import TopoDS_Shape, topods_Vertex, TopoDS_Solid
 from OCC.Extend.DataExchange import read_step_file, read_step_file_with_names_colors
 from OCC.Extend.TopologyUtils import TopologyExplorer
 
@@ -56,7 +58,7 @@ def shape_points(the_shape):
 
 
 def step_model_explore2():
-    solidList = SolidUtil.get_solids_from_step('segment-1.step')
+    solidList = SolidUtil.get_solids_from_step('data/step/62-2.step')
     for solid in solidList:
         solidProps = SolidUtil.get_solid_feature(solid)
         print("solid mass:", solidProps.mass)
@@ -73,7 +75,7 @@ def step_model_explore2():
         #           (faceProps.axisLocationX, faceProps.axisLocationY, faceProps.axisLocationZ))
 
 
-def parse_step_to_csv(file_name):
+def parse_step_to_df(file_name):
     stp_name_colors = read_step_file_with_names_colors(file_name)
     solid_data = []
     for shp in stp_name_colors:
@@ -99,9 +101,11 @@ def parse_step_to_csv(file_name):
             "maxFaceAxisDirectY": solidProps.maxFaceFeature.axisDirectY,
             "maxFaceAxisDirectZ": solidProps.maxFaceFeature.axisDirectZ,
             "maxFacePerimeter": solidProps.maxFaceFeature.perimeter,
+            "maxFaceMaxEdgeLength": solidProps.maxFaceFeature.maxEdgeFeature.length,
             "maxFaceMaxEdgeCentreX": solidProps.maxFaceFeature.maxEdgeFeature.centreX,
             "maxFaceMaxEdgeCentreY": solidProps.maxFaceFeature.maxEdgeFeature.centreY,
             "maxFaceMaxEdgeCentreZ": solidProps.maxFaceFeature.maxEdgeFeature.centreZ,
+            "maxFaceMinEdgeLength": solidProps.maxFaceFeature.minEdgeFeature.length,
             "maxFaceMinEdgeCentreX": solidProps.maxFaceFeature.minEdgeFeature.centreX,
             "maxFaceMinEdgeCentreY": solidProps.maxFaceFeature.minEdgeFeature.centreY,
             "maxFaceMinEdgeCentreZ": solidProps.maxFaceFeature.minEdgeFeature.centreZ,
@@ -118,9 +122,11 @@ def parse_step_to_csv(file_name):
             "minFaceAxisDirectY": solidProps.minFaceFeature.axisDirectY,
             "minFaceAxisDirectZ": solidProps.minFaceFeature.axisDirectZ,
             "minFacePerimeter": solidProps.minFaceFeature.perimeter,
+            "minFaceMaxEdgeLength": solidProps.minFaceFeature.minEdgeFeature.length,
             "minFaceMaxEdgeCentreX": solidProps.minFaceFeature.minEdgeFeature.centreX,
             "minFaceMaxEdgeCentreY": solidProps.minFaceFeature.minEdgeFeature.centreY,
             "minFaceMaxEdgeCentreZ": solidProps.minFaceFeature.minEdgeFeature.centreZ,
+            "minFaceMinEdgeLength": solidProps.minFaceFeature.minEdgeFeature.length,
             "minFaceMinEdgeCentreX": solidProps.minFaceFeature.minEdgeFeature.centreX,
             "minFaceMinEdgeCentreY": solidProps.minFaceFeature.minEdgeFeature.centreY,
             "minFaceMinEdgeCentreZ": solidProps.minFaceFeature.minEdgeFeature.centreZ,
@@ -129,15 +135,20 @@ def parse_step_to_csv(file_name):
             "faceMassAverage": solidProps.faceMassAverage,
             "faceMassVariance": solidProps.faceMassVariance,
             "edgeCount": solidProps.edgeCount,
-            "edgeLenSum": solidProps.edgeLenSum
+            "edgeLenSum": solidProps.edgeLenSum,
+            "segment_no": file_name
         }
         solid_data.append(data)
 
-    df = pd.DataFrame(solid_data)
-    csv_filename = file_name.replace(".step", ".csv")
-    df.to_csv(csv_filename)
+    part_df = pd.DataFrame(solid_data)
+    return part_df
 
-    print(f"{file_name}已解析完毕，生成{csv_filename}")
+
+def parse_step_to_csv(file_name):
+    df = parse_step_to_df(file_name)
+    df_to_csv(file_name, df)
+
+    print(f"{file_name}已解析完毕")
 
 
 # 因为是只解析step文件的几何属性，所有只能把自定义属性加在solid的name中，所以name为"模型名称_GUID"
@@ -160,12 +171,52 @@ def parse_name_and_guid(old_name):
         return old_name, None
 
 
+# 将一个文件夹下所有step模型进行解析，并且合并成一个dataframe
+def folder_step_to_df(folder_path, old_step_name):
+    guid_index_dict = {}
+
+    # Step 1: Read folder and extract guid, index from each "{old_step_name}.step" file
+    old_file_path = os.path.join(folder_path, old_step_name+".step")
+    old_df = parse_step_to_df(old_file_path)
+    guid_index_dict.update(dict(zip(old_df.index, old_df['guid'])))
+
+    # Step 2: Read all "xxx" files and update the "guid" column using the guid_index_dict
+    dfs = []
+    for file_name in os.listdir(folder_path):
+        if file_name.startswith(old_step_name):
+            file_path = os.path.join(folder_path, file_name)
+            print(f"正在解析模型：{file_name}")
+            df = parse_step_to_df(file_path)
+            df['guid'] = df.index.map(guid_index_dict)
+            dfs.append(df)
+
+    # Step 3: Merge all DataFrames into a single DataFrame
+    merged_df = pd.concat(dfs, ignore_index=True)
+
+    return merged_df
+
+
+def df_to_csv(file_name, df):
+    csv_filename = file_name.replace(".step", ".csv")
+    df.index = df.index+1
+    df.to_csv(csv_filename, index_label='index')
+
+
+# 解析多个step模型的特征
+def parse_mul_step_to_csv():
+    file_path = "data/step/"
+    file_name = "C3-JD-27_v2_1"
+    full_file_path = os.path.join(file_path, file_name+".step")
+    df = folder_step_to_df(file_path, file_name)
+    df_to_csv(full_file_path, df)
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(f"开始解析step文件")
     start_time = time.perf_counter()
-    # step_model_explore2()
-    # parse_step_to_csv('data/step/C3-JD-27_1.step')
+
+    parse_step_to_csv('data/step/61-v2.1_1.step')
 
     end_time = time.perf_counter()
     duration = end_time - start_time

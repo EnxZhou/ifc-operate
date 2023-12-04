@@ -106,3 +106,5 @@ zlib=1.2.12=h8ffe710_2
 zstd=1.5.2=h7755175_4
 
 pandas~=1.4.4
+openpyxl~=3.0.10
+networkx~=2.8.4

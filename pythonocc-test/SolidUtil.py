@@ -1,3 +1,5 @@
+import csv
+
 from OCC.Core import BRepBuilderAPI, BRepGProp, TopoDS
 
 from OCC.Core.GProp import GProp_GProps
@@ -5,6 +7,8 @@ from OCC.Core.BRepGProp import brepgprop_VolumeProperties, brepgprop_LinearPrope
 import FaceUtil
 from OCC.Extend.DataExchange import read_step_file, read_step_file_with_names_colors
 from OCC.Extend.TopologyUtils import is_face, is_edge, TopologyExplorer
+
+import openpyxl
 
 
 # 体特征
@@ -42,8 +46,8 @@ class SolidFeature:
         }
 
 
-# 体节点
-class SolidNode:
+# solid节点的特征
+class SolidNodeFeature:
     mass = 0.0
     centreOfMassX = 0.0
     centreOfMassY = 0.0
@@ -67,6 +71,51 @@ class SolidNode:
                 self.faceCount]
 
 
+# SolidNode代表将Solid作为graph的节点（node）处理
+# 节点属性包含节点名称即节点特征
+class SolidNode:
+    name = ""
+    feature = SolidNodeFeature
+
+    def __init__(self, name, feature):
+        self.name = name
+        self.feature = feature
+
+
+# 读取判断好dist的文件，转换为SolidNode
+def solid_node_from_csv(file_name):
+    # 读取xlsx文件中名为“solid”的sheet表
+    wb = openpyxl.load_workbook(file_name, read_only=True)
+    ws = wb['solid']
+
+    # 获取字段名所在的行号
+    header_row = 1
+    header = []
+    for cell in ws[header_row]:
+        header.append(cell.value)
+
+    # 获取每个字段对应的列号
+    mass_col = header.index('mass')
+    centreOfMassX_col = header.index('centreOfMassX')
+    centreOfMassY_col = header.index('centreOfMassY')
+    centreOfMassZ_col = header.index('centreOfMassZ')
+    faceCount_col = header.index('faceCount')
+
+    # 遍历sheet表中的数据，并将其写入SolidNode对象
+    solid_nodes = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        name = row[header.index('name')]
+        feature = SolidNodeFeature()
+        feature.mass = row[mass_col]
+        feature.centreOfMassX = row[centreOfMassX_col]
+        feature.centreOfMassY = row[centreOfMassY_col]
+        feature.centreOfMassZ = row[centreOfMassZ_col]
+        feature.faceCount = row[faceCount_col]
+        solid_node = SolidNode(name, feature)
+        solid_nodes.append(solid_node)
+    return solid_nodes
+
+
 def get_solid_node(_solid):
     props = GProp_GProps()
     # 创建计算几何属性对象
@@ -77,8 +126,8 @@ def get_solid_node(_solid):
     # 获取面个数
     face_count = FaceUtil.get_face_count_of_solid(_solid)
 
-    # 创建 SolidNode 对象
-    feature = SolidNode()
+    # 创建 SolidNodeFeature 对象
+    feature = SolidNodeFeature()
     feature.mass = mass
     feature.centreOfMassX = centre_of_mass.X()
     feature.centreOfMassY = centre_of_mass.Y()

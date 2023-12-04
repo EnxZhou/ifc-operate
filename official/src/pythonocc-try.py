@@ -84,8 +84,8 @@ if __name__ == '__main__':
     for f in read_face:
         recognize_face(f)
 
-    # display, start_display, add_menu, add_function_to_menu = init_display()
-    # display.DisplayShape(read_face, update=True)
-    # start_display()
+    display, start_display, add_menu, add_function_to_menu = init_display()
+    display.DisplayShape(read_face, update=True)
+    start_display()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

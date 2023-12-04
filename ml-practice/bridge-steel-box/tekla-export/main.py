@@ -174,7 +174,7 @@ def PreprocessData():
 
     file_path = 'dataset/label-v2/12train-3test/with-xyz/'
     train_data = pd.read_csv(file_path + 'train.csv')
-    test_data = pd.read_csv(file_path + 'test.csv')
+    test_data = pd.read_csv(file_path + 'train1.csv')
     train_data['is_train'] = 1
     test_data['is_train'] = 0
     data = pd.concat([train_data, test_data])

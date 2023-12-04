@@ -19,7 +19,7 @@ class IfcFile:
             try:
                 inst.Name = inst.Name + "_" + inst.Tag
             except:
-                print("name:",inst.Name,"tag:",inst.Tag,"failed")
+                print("name:", inst.Name, "tag:", inst.Tag, "failed")
                 continue
 
     def save_file(self, new_file_name):

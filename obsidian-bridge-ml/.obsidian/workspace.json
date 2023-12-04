@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "开源项目/PointNet.md",
+                "file": "研究笔记/钢箱梁特征定义.md",
                 "mode": "source",
                 "source": false
               }
@@ -77,6 +77,14 @@
               "type": "starred",
               "state": {}
             }
+          },
+          {
+            "id": "553c257a550b1ddf",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
           }
         ]
       }
@@ -98,7 +106,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "开源项目/PointNet.md",
+                "file": "研究笔记/钢箱梁特征定义.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +123,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "开源项目/PointNet.md",
+                "file": "研究笔记/钢箱梁特征定义.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +146,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "开源项目/PointNet.md"
+                "file": "研究笔记/钢箱梁特征定义.md"
               }
             }
           }
@@ -159,18 +167,18 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "3d5c684297dad942",
+  "active": "1d7254b1b8e1d7ab",
   "lastOpenFiles": [
+    "研究笔记/模型选择.md",
+    "研究笔记/钢箱梁特征定义.md",
+    "研究笔记/解析step文件，提取特征.md",
+    "研究笔记/occ-step聚类.md",
+    "研究笔记/tekla 报告导出特征.md",
+    "论文笔记/IFCNet-A Benchmark Dataset for IFC Entity Classification.md",
     "研究笔记/未命名",
     "研究笔记",
-    "论文笔记/IFCNet-A Benchmark Dataset for IFC Entity Classification.md",
     "开源项目/PointNet.md",
     "论文笔记/A geometric deep learning approach for checking element-to-entity mappings in infrastructure building information models.md",
-    "研究笔记/occ-step聚类.md",
-    "研究笔记/模型选择.md",
-    "研究笔记/解析step文件，提取特征.md",
-    "研究笔记/tekla 报告导出特征.md",
-    "研究笔记/钢箱梁特征定义.md",
     "论文笔记/Machine Learning for Risk and Resilience Assessment in Structural Engineering- Progress and Future Trends.md",
     "论文笔记/Application of machine learning in bridge engineering-A state-of-the-art review.md",
     "论文笔记/DeepCAD.md",

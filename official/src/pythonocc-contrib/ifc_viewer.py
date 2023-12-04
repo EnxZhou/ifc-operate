@@ -46,8 +46,8 @@ if __name__ == "__main__":
     products_to_display = []
     for product in products:
         if (product.is_a("IfcOpeningElement") or
-             product.is_a("IfcSite") or product.is_a("IfcAnnotation")):
-                continue
+                product.is_a("IfcSite") or product.is_a("IfcAnnotation")):
+            continue
         if product.Representation is not None:
             products_to_display.append(product)
     print("Products to display: %i" % len(products_to_display))
@@ -56,12 +56,12 @@ if __name__ == "__main__":
     idx = 0
     product_shapes = []
     for product in products_to_display:
-            # display current product
-            shape = ifcopenshell.geom.create_shape(settings, product).geometry
-            product_shapes.append((product, shape))
-            idx += 1
-            print("\r[%i%%]Product: %s" % (int(idx*100/len(products_to_display)), product))
-            print(metadata[product])
+        # display current product
+        shape = ifcopenshell.geom.create_shape(settings, product).geometry
+        product_shapes.append((product, shape))
+        idx += 1
+        print("\r[%i%%]Product: %s" % (int(idx * 100 / len(products_to_display)), product))
+        print(metadata[product])
 
     # Initialize a graphical display window
     print("Initializing pythonocc display ...", end="")
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         display.DisplayShape((ps[1]))
         idx += 1
         # progress bar
-        print("[%i%%] Sending shapes to pythonocc display." % int(idx*100/nbr_shapes))
+        print("[%i%%] Sending shapes to pythonocc display." % int(idx * 100 / nbr_shapes))
     display.FitAll()
     display.display_graduated_trihedron()
     start_display()

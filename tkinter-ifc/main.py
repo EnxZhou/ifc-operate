@@ -1,5 +1,7 @@
 #!/bin/python
+import csv
 import os.path
+import re
 
 import ifcopenshell as ifc
 import tkinter as tk
@@ -152,12 +154,56 @@ def addGuidToName(old_file_path, new_file_path):
     old_file.write(new_file_path)
 
 
-def test3():
-    ifc_file_path = OpenFile(".ifc", ("IFC-Files", "*.ifc"))
+def write_id_guid(old_file_path, new_file_path):
+    ifc_file = ifc.open(old_file_path)
+    instances = ifc_file.by_type("IfcBuildingElement")
 
-    newfile = mergeNameGuid(ifc_file_path)
-    newFileName = SaveFileAs(".ifc")
-    newfile.save_file(newFileName)
+    res_list = []
+
+    for inst in instances:
+        try:
+            ifc_id = extract_number(str(inst))
+            tekla_guid = remove_id_prefix(inst.Tag)
+            res = {"id": ifc_id, "guid": tekla_guid}
+            res_list.append(res)
+        except:
+            print("name:", inst.Name, "tag:", inst.Tag, "failed")
+            continue
+
+    write_id_guid_to_csv(res_list, new_file_path)
+    print("完成id,guid清单导出")
+
+
+def write_id_guid_to_csv(data_list, file_path):
+    field_names = ["id", "guid"]
+    with open(file_path, mode="w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=field_names)
+        writer.writeheader()
+
+        for data in data_list:
+            writer.writerow(data)
+
+
+def remove_id_prefix(input_string):
+    prefix = "ID"
+    if input_string.startswith(prefix):
+        return input_string[len(prefix):]
+    else:
+        return input_string
+
+
+def extract_number(input_string):
+    # 定义正则表达式，用于匹配数字
+    pattern = r'\d+'
+
+    # 使用findall函数查找所有匹配的数字
+    numbers = re.findall(pattern, input_string)
+
+    # 返回第一个匹配的数字（如果有的话）
+    if numbers:
+        return numbers[0]
+    else:
+        return None
 
 
 def browse_files():
@@ -169,11 +215,26 @@ def process_files():
     file_var_str = file_var.get()
     file_list = [file.strip().strip("'") for file in file_var_str[1:-1].split(",")]
     for file in file_list:
+        if file=='':
+            continue
         file_path, file_name = os.path.split(file)
         file_base, file_ext = os.path.splitext(file_name)
         new_file_name = file_base + "_1" + file_ext
         new_file_path = os.path.join(file_path, new_file_name)
         addGuidToName(file, new_file_path)
+
+
+def export_id_guid_list():
+    file_var_str = file_var.get()
+    file_list = [file.strip().strip("'") for file in file_var_str[1:-1].split(",")]
+    for file in file_list:
+        if file=='':
+            continue
+        file_path, file_name = os.path.split(file)
+        file_base, file_ext = os.path.splitext(file_name)
+        new_file_name = file_base + "_id_guid" + ".csv"
+        new_file_path = os.path.join(file_path, new_file_name)
+        write_id_guid(file, new_file_path)
 
 
 # def tryTkinter():
@@ -184,8 +245,11 @@ file_var = tk.StringVar()
 browse_button = tk.Button(root, text="选择文件", command=browse_files)
 browse_button.pack()
 
-process_button = tk.Button(root, text="处理文件", command=process_files)
+process_button = tk.Button(root, text="名称添加guid", command=process_files)
 process_button.pack()
+
+export_button = tk.Button(root, text="导出清单", command=export_id_guid_list)
+export_button.pack()
 
 file_label = tk.Label(root, textvariable=file_var)
 file_label.pack()

@@ -22,6 +22,8 @@ from OCC.Core.gp import gp_Pnt, gp_Dir
 from OCC.Extend.TopologyUtils import TopologyExplorer
 from OCC.Core.BRepTools import breptools_UVBounds
 
+import openpyxl
+
 import EdgeUtil
 
 
@@ -137,19 +139,79 @@ class FaceNodeFeature:
                 self.axisDirectZ,
                 self.edgeCount]
 
+    def list_marshal(self, data):
+        self.mass = data[0]
+        self.centreOfMassX = data[1]
+        self.centreOfMassY = data[2]
+        self.centreOfMassZ = data[3]
+        self.axisLocationX = data[4]
+        self.axisLocationY = data[5]
+        self.axisLocationZ = data[6]
+        self.axisDirectX = data[7]
+        self.axisDirectY = data[8]
+        self.axisDirectZ = data[9]
+        self.edgeCount = data[10]
+
 
 # 面节点
 class FaceNode:
     topoDS_face = TopoDS_Face
     solidName = ""
     index = 0
-    faceNodeFeature = FaceNodeFeature
+    feature = FaceNodeFeature
 
-    def __init__(self):
-        topoDS_face = None
-        solidName = ""
-        index = 0
-        faceNodeFeature = None
+    def __init__(self, topoDS_face, solidName, index, faceNodeFeature):
+        self.topoDS_face = topoDS_face
+        self.solidName = solidName
+        self.index = index
+        self.feature = faceNodeFeature
+
+
+# 读取判断好dist的文件，转换为FaceNode
+def face_node_from_xlsx(file_name):
+    # 读取xlsx文件中名为“solid”的sheet表
+    wb = openpyxl.load_workbook(file_name, read_only=True)
+    ws = wb['face']
+
+    # 获取字段名所在的行号
+    header_row = 1
+    header = []
+    for cell in ws[header_row]:
+        header.append(cell.value)
+
+    # 获取每个字段对应的列号
+    mass_col = header.index('mass')
+    centreOfMassX_col = header.index('centreOfMassX')
+    centreOfMassY_col = header.index('centreOfMassY')
+    centreOfMassZ_col = header.index('centreOfMassZ')
+    axisLocationX_col = header.index('axisLocationX')
+    axisLocationY_col = header.index('axisLocationY')
+    axisLocationZ_col = header.index('axisLocationZ')
+    axisDirectX_col = header.index('axisDirectX')
+    axisDirectY_col = header.index('axisDirectY')
+    axisDirectZ_col = header.index('axisDirectZ')
+    edgeCount_col = header.index('edgeCount')
+
+    # 遍历sheet表中的数据，并将其写入SolidNode对象
+    face_nodes = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        name = row[header.index('name')]
+        index = row[header.index('index')]
+        feature = FaceNodeFeature()
+        feature.mass = row[mass_col]
+        feature.centreOfMassX = row[centreOfMassX_col]
+        feature.centreOfMassY = row[centreOfMassY_col]
+        feature.centreOfMassZ = row[centreOfMassZ_col]
+        feature.axisLocationX = row[axisLocationX_col]
+        feature.axisLocationY = row[axisLocationY_col]
+        feature.axisLocationZ = row[axisLocationZ_col]
+        feature.axisDirectX = row[axisDirectX_col]
+        feature.axisDirectY = row[axisDirectY_col]
+        feature.axisDirectZ = row[axisDirectZ_col]
+        feature.edgeCount = row[edgeCount_col]
+        face_node = FaceNode(topoDS_face=None,solidName=name, index=index, faceNodeFeature=feature)
+        face_nodes.append(face_node)
+    return face_nodes
 
 
 # 获取面的属性
@@ -321,12 +383,11 @@ def get_face_node_from_solid(_solid: TopoDS_Shape, solid_name: str):
     faceList = []
     index = 0
     for face in t.faces():
-        index = index+1
-        current_face_node = FaceNode()
-        current_face_node.topoDS_face = face
-        current_face_node.index = index
-        current_face_node.solidName = solid_name
-        current_face_node.faceNodeFeature = get_face_node_feature(face)
+        index = index + 1
+        current_face_node = FaceNode(solidName=solid_name,
+                                     index=index,
+                                     topoDS_face=face,
+                                     faceNodeFeature=get_face_node_feature(face))
         faceList.append(current_face_node)
     return faceList
 

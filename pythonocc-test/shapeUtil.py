@@ -9,11 +9,18 @@ def isShapeAdjacent(shape1, shape2, tolerance):
          determine that the two shapes are adjacent to each other
     """
     dist = BRepExtrema_DistShapeShape(shape1, shape2)
+    # 似乎在python中设置多线程没有效果
+    # dist.SetMultiThread(True)
+    dist.Perform()
     if dist.Value() < tolerance:
         return True
     else:
         return False
 
+
 def distOfShape(shape1, shape2):
     dist = BRepExtrema_DistShapeShape(shape1, shape2)
-    return dist
+    # 似乎在python中设置多线程没有效果
+    # dist.SetMultiThread(True)
+    dist.Perform()
+    return dist.Value()
