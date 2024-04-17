@@ -25,14 +25,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "研究笔记/钢箱梁特征定义.md",
+                "file": "论文笔记/UV-Net.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "f49ffa653bcb59c4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "研究笔记/解析step文件，提取特征.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -106,7 +118,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "研究笔记/钢箱梁特征定义.md",
+                "file": "研究笔记/解析step文件，提取特征.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -123,7 +135,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "研究笔记/钢箱梁特征定义.md",
+                "file": "研究笔记/解析step文件，提取特征.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -146,7 +158,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "研究笔记/钢箱梁特征定义.md"
+                "file": "研究笔记/解析step文件，提取特征.md"
               }
             }
           }
@@ -167,35 +179,36 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "1d7254b1b8e1d7ab",
+  "active": "f49ffa653bcb59c4",
   "lastOpenFiles": [
-    "研究笔记/模型选择.md",
     "研究笔记/钢箱梁特征定义.md",
-    "研究笔记/解析step文件，提取特征.md",
+    "研究笔记/模型选择.md",
     "研究笔记/occ-step聚类.md",
     "研究笔记/tekla 报告导出特征.md",
+    "研究笔记/解析step文件，提取特征.md",
+    "论文笔记/A geometric deep learning approach for checking element-to-entity mappings in infrastructure building information models.md",
+    "论文笔记/Application of machine learning in bridge engineering-A state-of-the-art review.md",
+    "论文笔记/BRepNet.md",
+    "论文笔记/Bridge type classification.md",
+    "论文笔记/CADNet.md",
+    "论文笔记/DeepCAD.md",
     "论文笔记/IFCNet-A Benchmark Dataset for IFC Entity Classification.md",
+    "论文笔记/Graph representation of 3D cad models for machining feature recognition with deep learning.md",
+    "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
+    "论文笔记/刘子舜. 使用卷积网络估计三维形状的正朝向.中国科学技术大学,2016..md",
+    "开源项目/PointNet.md",
+    "论文笔记/Machine Learning for Risk and Resilience Assessment in Structural Engineering- Progress and Future Trends.md",
+    "论文笔记/PolyGen.md",
     "研究笔记/未命名",
     "研究笔记",
-    "开源项目/PointNet.md",
-    "论文笔记/A geometric deep learning approach for checking element-to-entity mappings in infrastructure building information models.md",
-    "论文笔记/Machine Learning for Risk and Resilience Assessment in Structural Engineering- Progress and Future Trends.md",
-    "论文笔记/Application of machine learning in bridge engineering-A state-of-the-art review.md",
-    "论文笔记/DeepCAD.md",
     "数据集/DeepCAD.md",
     "开源项目/DeepCAD.md",
-    "论文笔记/CADNet.md",
     "开源项目/MFCAD.md",
     "开源项目/Hierarchical-CADNet.md",
-    "论文笔记/PolyGen.md",
-    "论文笔记/Graph representation of 3D cad models for machining feature recognition with deep learning.md",
     "数据集/MFCAD.md",
     "论文笔记/UV-Net.md",
-    "论文笔记/3D ShapeNets-一种深度表示体积形状的方法.md",
-    "论文笔记/BRepNet.md",
     "数据集/NBI.md",
     "开源项目",
-    "论文笔记/Bridge type classification.md",
     "数据集/Fusion 360 Gallery.md",
     "数据集",
     "论文笔记",

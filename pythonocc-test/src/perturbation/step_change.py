@@ -9,7 +9,9 @@
 
 import math
 import os
+import random
 
+import numpy as np
 from OCC.Core.STEPControl import STEPControl_Reader, STEPControl_AsIs
 from OCC.Core.TopoDS import TopoDS_Shape
 from OCC.Core.GProp import GProp_GProps
@@ -51,11 +53,65 @@ def rotate_shape(shape, angle_degrees, axis: Point3D, point: Point3D):
     return BRepBuilderAPI_Transform(shape, rotation).Shape()
 
 
+# 这个函数接受一个形状 (shape)、缩放因子 (scaling_factor) 和一个三维点 (point) 作为参数。
+# 它使用传入的缩放因子和点来创建一个以该点为中心进行缩放的变换，然后将该变换应用于给定的形状，返回缩放后的形状。
 def scale_shape(shape, scaling_factor, point: Point3D):
     point_scaling = gp_Pnt(point.x, point.y, point.z)
     scaling = gp_Trsf()
     scaling.SetScale(point_scaling, scaling_factor)
     return BRepBuilderAPI_Transform(shape, scaling).Shape()
+
+
+# 这个函数接受一个形状 (shape) 和一个可选的仿射因子 (affine_factor) 作为参数。
+# 它生成一个随机的 3x4 变换矩阵，并且可以通过仿射因子来控制变换的范围。
+# 然后将生成的变换矩阵应用于给定的形状，返回变换后的形状。
+def random_affine_shape(shape, affine_factor=0.2):
+    # 生成一个随机的 3x4 变换矩阵，并控制变化范围
+    matrix = [
+        [random.uniform(1 - affine_factor, 1 + affine_factor) for _ in range(3)]
+        for _ in range(4)
+    ]
+    a =generate_random_3d_transform()
+    scaling = gp_Trsf()
+    scaling.SetValues(*[val for sublist in a for val in sublist])
+    # Apply the transformation to the shape
+    return BRepBuilderAPI_Transform(shape, scaling).Shape()
+
+
+def generate_random_3d_transform():
+    """
+    生成随机的三维变换矩阵，包括随机旋转、缩放和平移
+
+    返回值：
+    transform_matrix: 4x4的变换矩阵
+    """
+    from scipy.spatial.transform import Rotation as R
+    # 随机生成旋转矩阵
+    # 生成随机旋转轴
+    random_axis = np.random.rand(3)
+
+    # 生成随机旋转角度（0到2π之间）
+    random_angle = np.random.uniform(0, 2 * np.pi)
+
+    # 创建旋转矩阵
+    rotation = R.from_rotvec(random_axis * random_angle)
+    rotation_matrix = rotation.as_matrix()
+
+    # 随机生成缩放矩阵
+    scale_matrix = np.diag(np.random.uniform(0.5, 1.5, 3))  # 对角线元素随机生成
+
+    # 随机生成平移向量
+    translation_vector = np.random.uniform(-5, 5, 3)  # 随机生成在[-5, 5]范围内的平移向量
+
+    # 组合变换矩阵
+    transform_matrix_4x4 = np.eye(4)
+    transform_matrix_4x4[:3, :3] = rotation_matrix @ scale_matrix
+    transform_matrix_4x4[:3, 3] = translation_vector
+
+    # 提取前三列，构建4x3的变换矩阵
+    transform_matrix_4x3 = transform_matrix_4x4[:3, :]
+
+    return transform_matrix_4x3
 
 
 def display_shapes(*shapes):
@@ -152,18 +208,21 @@ def batch_transformations_and_save(shape, save_name: str, centre_of_mass, save_p
 
 def try1():
     # 读取STEP格式文件
-    shape = read_step_file("../../data/step/Z4-SS9-1-v2_1.step")
+    shape = read_step_file("../../data/step/NXJ4-NXZ_8_1.step")
 
     centre_of_mass = calculate_model_centre(shape)
     # 平移、旋转、缩放
     translated_shape = translate_shape(shape, 10000.0, 1.0, 1.0)
     rotated_shape = rotate_shape(shape, degrees_to_radians(1), Point3D(x=0, y=0, z=1), centre_of_mass)
     scaled_shape = scale_shape(shape, 2, centre_of_mass)
+    # 随机变化
+    affine_shape = random_affine_shape(shape, 0.1)
 
     # 显示原始模型和变换后的模型
     # display_shapes(shape, translated_shape, rotated_shape, scaled_shape)
     # display_shapes(shape, translated_shape, scaled_shape)
     # display_shapes(shape, rotated_shape)
+    display_shapes(shape, affine_shape)
     # save_shape(rotated_shape, "../../data/step/Z4-SS9-1-v2_1_ro.step", "STEP")
 
 
@@ -171,7 +230,9 @@ if __name__ == "__main__":
     # 读取STEP格式文件
     # file_name = "C3-JD-27_v2.1_1"
     # file_name = "61-v2.1_1"
-    file_name = "X11-SE1-v2.1_1"
-    shape = read_step_file("../../data/step/"+file_name+".step")
-    centre_of_mass = calculate_model_centre(shape)
-    batch_transformations_and_save(shape, file_name, centre_of_mass, "../../data/step/")
+    # file_name = "X11-SE1-v2.1_1"
+    # shape = read_step_file("../../data/step/"+file_name+".step")
+    # centre_of_mass = calculate_model_centre(shape)
+    # batch_transformations_and_save(shape, file_name, centre_of_mass, "../../data/step/")
+
+    try1()

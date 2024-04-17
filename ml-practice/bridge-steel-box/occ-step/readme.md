@@ -45,3 +45,24 @@ v3.1版本数据集，标签只分成两类（main，sub），只分成主板和
 ## 聚类
 如果设置聚类的个数，比较容易将空间上临近的分成一类，不满足我本来的想法
 如果不设置聚类个数，很容易分成几十-几百个类别，而且很不稳定，每一次聚类分析，结果都有可能不一致。
+
+2024.4.17
+用 label-v2/xmSS9train-lm61test 数据进行聚类算法
+数据项取如下：
+'centreOfMassX', 'centreOfMassY', 'centreOfMassZ', 'maxFaceMass',
+'maxFaceAxisDirectX', 'maxFaceAxisDirectY', 'maxFaceAxisDirectZ',
+'faceMassAverage', 'faceMassVariance'
+
+再绘制皮尔逊相关系数图
+![皮尔逊相关系数图](./person_correlation_plot.png)
+再确定聚类个数，确定11最最佳个数
+输不同模型的评比结果
+
+K-Means n_clusters=11, Silhouette Coefficient: 0.8608966523860421
+OPTICS  n_clusters=246, Silhouette Coefficient: 0.5414156987042843
+Agglomerative n_clusters=11, Silhouette Coefficient: 0.8599025489857536
+
+确定采用K-Means算法模型
+![K-Means聚类散点结果](./数据聚类的结果2.png)
+然后用K-Means算法模型，输出散点聚类结果，发现基本是按照z坐标进行聚类，这样的聚类结果是没法实际使用的
+所以证明这条技术路线不通
