@@ -78,6 +78,7 @@ def main_sub_node_to_graph(source_file_path):
 
     for graph_edge in graph_edge_list:
         # 增加边的权重，虽说可以针对main-main，main-sub，sub-sub之间的关系进行区分
+        # 效果一般，zex，20240716
         # node1_class=G.nodes[graph_edge.node1]['node_class']
         # node2_class=G.nodes[graph_edge.node2]['node_class']
         # if node1_class==node2_class and node1_class=='main':

@@ -156,7 +156,8 @@ def addGuidToName(old_file_path, new_file_path):
 
 def write_id_guid(old_file_path, new_file_path):
     ifc_file = ifc.open(old_file_path)
-    instances = ifc_file.by_type("IfcBuildingElement")
+    # instances = ifc_file.by_type("IfcBuildingElement")#零件
+    instances = ifc_file.by_type("IfcMechanicalFastener")#螺栓
 
     res_list = []
 
@@ -164,18 +165,23 @@ def write_id_guid(old_file_path, new_file_path):
         try:
             ifc_id = extract_number(str(inst))
             tekla_guid = remove_id_prefix(inst.Tag)
-            res = {"id": ifc_id, "guid": tekla_guid}
+            global_id = inst.GlobalId
+            nominalDiameter = str(inst.NominalDiameter)
+            nominalLength = str(inst.NominalLength)
+
+            res = {"id": ifc_id,"globalId":global_id, "teklaGuid": tekla_guid, "nominalDiameter":nominalDiameter,
+                   "nominalLength":nominalLength}
             res_list.append(res)
         except:
             print("name:", inst.Name, "tag:", inst.Tag, "failed")
             continue
 
     write_id_guid_to_csv(res_list, new_file_path)
-    print("完成id,guid清单导出")
+    print("完成id清单导出")
 
 
 def write_id_guid_to_csv(data_list, file_path):
-    field_names = ["id", "guid"]
+    field_names = ["id","globalId", "teklaGuid","nominalDiameter","nominalLength"]
     with open(file_path, mode="w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)
         writer.writeheader()
@@ -232,7 +238,7 @@ def export_id_guid_list():
             continue
         file_path, file_name = os.path.split(file)
         file_base, file_ext = os.path.splitext(file_name)
-        new_file_name = file_base + "_id_guid" + ".csv"
+        new_file_name = file_base + "_id_relation" + ".csv"
         new_file_path = os.path.join(file_path, new_file_name)
         write_id_guid(file, new_file_path)
 

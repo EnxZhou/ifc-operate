@@ -3,36 +3,91 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.metrics import accuracy_score, silhouette_score
 from sklearn.model_selection import train_test_split, cross_validate, KFold
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
+from prettytable import PrettyTable
 
 label_feature = LabelEncoder()
-xyz_feature = ['centreOfMassX', 'centreOfMassY', 'centreOfMassZ', 'maxFaceMass',
+# xyz_feature = ['centreOfMassX', 'centreOfMassY', 'centreOfMassZ', 'maxFaceMass',
+#                'maxFaceAxisDirectX', 'maxFaceAxisDirectY', 'maxFaceAxisDirectZ',
+#                'faceMassAverage', 'faceMassVariance']
+
+xyz_feature = ['solidMass', 'centreOfMassX', 'centreOfMassY', 'centreOfMassZ',
                'maxFaceAxisDirectX', 'maxFaceAxisDirectY', 'maxFaceAxisDirectZ',
-               'faceMassAverage', 'faceMassVariance']
+               'maxFacePerimeter', 'maxFaceEdgeLengthAverage', 'maxFaceEdgeLengthVariance',
+               'minFaceMass',
+               'minFaceAxisDirectX', 'minFaceAxisDirectY', 'minFaceAxisDirectZ',
+               'edgeCount', 'edgeLenSum']
 
 
 # xyz_feature = ['solidMass',
-#                    'centreOfMassX', 'centreOfMassY', 'centreOfMassZ',
-#                    'surfaceArea', 'maxFaceMass',
-#                    'maxFaceCentreOfMassX', 'maxFaceCentreOfMassY', 'maxFaceCentreOfMassZ',
-#                    'maxFaceAxisLocationX', 'maxFaceAxisLocationY', 'maxFaceAxisLocationZ',
-#                    'maxFaceAxisDirectX', 'maxFaceAxisDirectY', 'maxFaceAxisDirectZ',
-#                    'maxFacePerimeter',
-#                    'maxFaceMaxEdgeCentreX', 'maxFaceMaxEdgeCentreY', 'maxFaceMaxEdgeCentreZ',
-#                    'maxFaceMinEdgeCentreX', 'maxFaceMinEdgeCentreY', 'maxFaceMinEdgeCentreZ',
-#                    'maxFaceEdgeLengthAverage', 'maxFaceEdgeLengthVariance', 'minFaceMass',
-#                    'minFaceCentreOfMassX', 'minFaceCentreOfMassY', 'minFaceCentreOfMassZ',
-#                    'minFaceAxisLocationX', 'minFaceAxisLocationY', 'minFaceAxisLocationZ',
-#                    'minFaceAxisDirectX', 'minFaceAxisDirectY', 'minFaceAxisDirectZ',
-#                    'minFacePerimeter',
-#                    'minFaceMaxEdgeCentreX', 'minFaceMaxEdgeCentreY', 'minFaceMaxEdgeCentreZ',
-#                    'minFaceMinEdgeCentreX', 'minFaceMinEdgeCentreY', 'minFaceMinEdgeCentreZ',
-#                    'minFaceEdgeLengthAverage', 'minFaceEdgeLengthVariance',
-#                    'faceMassAverage', 'faceMassVariance', 'edgeCount', 'edgeLenSum']
+#                'centreOfMassX', 'centreOfMassY', 'centreOfMassZ',
+#                'surfaceArea', 'maxFaceMass',
+#                'maxFaceCentreOfMassX', 'maxFaceCentreOfMassY', 'maxFaceCentreOfMassZ',
+#                'maxFaceAxisLocationX', 'maxFaceAxisLocationY', 'maxFaceAxisLocationZ',
+#                'maxFaceAxisDirectX', 'maxFaceAxisDirectY', 'maxFaceAxisDirectZ',
+#                'maxFacePerimeter',
+#                'maxFaceMaxEdgeCentreX', 'maxFaceMaxEdgeCentreY', 'maxFaceMaxEdgeCentreZ',
+#                'maxFaceMinEdgeCentreX', 'maxFaceMinEdgeCentreY', 'maxFaceMinEdgeCentreZ',
+#                'maxFaceEdgeLengthAverage', 'maxFaceEdgeLengthVariance', 'minFaceMass',
+#                'minFaceCentreOfMassX', 'minFaceCentreOfMassY', 'minFaceCentreOfMassZ',
+#                'minFaceAxisLocationX', 'minFaceAxisLocationY', 'minFaceAxisLocationZ',
+#                'minFaceAxisDirectX', 'minFaceAxisDirectY', 'minFaceAxisDirectZ',
+#                'minFacePerimeter',
+#                'minFaceMaxEdgeCentreX', 'minFaceMaxEdgeCentreY', 'minFaceMaxEdgeCentreZ',
+#                'minFaceMinEdgeCentreX', 'minFaceMinEdgeCentreY', 'minFaceMinEdgeCentreZ',
+#                'minFaceEdgeLengthAverage', 'minFaceEdgeLengthVariance',
+#                'faceMassAverage', 'faceMassVariance', 'edgeCount', 'edgeLenSum']
+
+
+def display_and_save_dataset_attributes(file_path, features_output_path):
+    # 读取数据集
+    df = pd.read_csv(file_path)
+
+    # 获取数据集的一些基本属性
+    num_rows = df.shape[0]
+    num_cols = df.shape[1]
+    columns = df.columns.tolist()
+    data_types = df.dtypes.tolist()
+    missing_values = df.isnull().sum().tolist()
+
+    # 创建一个DataFrame来存储每个特征的属性
+    features_data = {
+        "Feature": [],
+        "Data Type": [],
+        "Missing Values": [],
+        "Unique Values": [],
+        "Min Value": [],
+        "Max Value": [],
+        "Sample Values": []
+    }
+
+    for col in columns:
+        unique_values = df[col].nunique()
+        min_value = df[col].min() if df[col].dtype != 'object' else None
+        max_value = df[col].max() if df[col].dtype != 'object' else None
+        sample_values = df[col].dropna().unique()[:5]
+
+        features_data["Feature"].append(col)
+        features_data["Data Type"].append(df[col].dtype)
+        features_data["Missing Values"].append(df[col].isnull().sum())
+        features_data["Unique Values"].append(unique_values)
+        features_data["Min Value"].append(min_value)
+        features_data["Max Value"].append(max_value)
+        features_data["Sample Values"].append(sample_values)
+
+    features_df = pd.DataFrame(features_data)
+
+    # 保存特征属性为CSV文件
+    features_df.to_csv(features_output_path, index=False)
+
+    # 打印特征属性表格
+    print("\nFeatures Attributes:")
+    print(features_df)
 
 
 def PreprocessDataForAP():
@@ -42,8 +97,11 @@ def PreprocessDataForAP():
 
     label_name = 'class'
 
+    # 数据集用的是厦门二东项目SS9模型
     file_path = 'dataset/label-v2/xmSS9train-lm61test/'
     train_data = pd.read_csv(file_path + 'train.csv')
+
+    display_and_save_dataset_attributes(file_path + 'train.csv', 'feature_display.csv')
     data = train_data
     data.reset_index(drop=True, inplace=True)
 
@@ -59,7 +117,7 @@ def PreprocessDataForAP():
     return data
 
 
-def AP_train(data,n_clusters=0):
+def AP_train(data, n_clusters=0):
     from sklearn.cluster import AgglomerativeClustering
     from sklearn.cluster import KMeans
     from sklearn.cluster import OPTICS
@@ -95,12 +153,12 @@ def AP_train(data,n_clusters=0):
 
 def cluster_train_pre(data):
     # 定义算法和参数
-
+    threshold = 0.95
     startN = 2
-    endN = 15
-    # xyz_data=filter_correlated_features(data,0.8)
-    xyz_data = remove_highly_correlated_columns(data, 0.95)
-    plot_person_correlation(xyz_data)
+    endN = 20
+    xyz_data = remove_highly_correlated_columns(data, threshold)
+    # plot_person_correlation(xyz_data)
+    plot_person_correlation2(data, threshold)
 
     # 调用函数，确定聚类数量
     print("Using KMeans:")
@@ -168,15 +226,65 @@ def remove_collinear_features(x, threshold):
     return x
 
 
+# 对比显示踢出高相关数据前后的热力图对比
+def plot_person_correlation2(data, threshold=0.95):
+    # 1. 计算原始数据的皮尔逊相关系数矩阵
+    original_corr_matrix = data.corr()
+    # 将原始相关系数矩阵保存为 CSV 文件
+    original_corr_matrix.to_csv("original_correlation_matrix.csv")
+
+    # 2. 去除高相关特征
+    reduced_data = remove_highly_correlated_columns(original_corr_matrix, threshold)
+    # 计算去除高相关特征后的相关系数矩阵
+    reduced_corr_matrix = reduced_data.corr()
+    # 将去除高相关特征后的相关系数矩阵保存为 CSV 文件
+    reduced_corr_matrix.to_csv("reduced_correlation_matrix.csv")
+
+    # 3. 绘制对比热力图
+    fig, ax = plt.subplots(1, 2, figsize=(24, 10))
+    # 设置中文字体
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+
+    # 原始相关系数热力图
+    sns.heatmap(original_corr_matrix, annot=True, cmap='coolwarm', ax=ax[0],
+                xticklabels=False, yticklabels=False, cbar=False)
+    ax[0].set_title('(a)原始数据', fontsize=26, pad=20)
+    ax[0].tick_params(axis='x', rotation=90, labelsize=10)
+    ax[0].tick_params(axis='y', labelsize=10)
+
+    # 去除高相关特征后的相关系数热力图
+    sns.heatmap(reduced_corr_matrix, annot=True, cmap='coolwarm', ax=ax[1],
+                xticklabels=False, yticklabels=False, cbar=False)
+    ax[1].set_title('(b)去除高相关特征后', fontsize=26, pad=20)
+    ax[1].tick_params(axis='x', rotation=90, labelsize=10)
+    ax[1].tick_params(axis='y', labelsize=10)
+
+    # 添加共享的颜色条
+    cbar_ax = fig.add_axes([0.92, 0.11, 0.02, 0.77])  # [left, bottom, width, height]
+    cbar = fig.colorbar(ax[0].collections[0], cax=cbar_ax)
+
+    # 调整子图参数，增加左侧留白
+    # plt.subplots_adjust(left=0.2, bottom=0.3)  # 这里的0.2可以根据需要调整，0.1到0.5之间通常比较合适
+    plt.savefig('comparison_correlation_plot.png')
+    plt.show()
+
+
 def plot_person_correlation(data):
     # 1. 皮尔逊相关系数图
     correlation_matrix = data.corr()
     # 将相关系数矩阵保存为 CSV 文件
     correlation_matrix.to_csv("correlation_matrix.csv")
 
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(12, 10))
+    # 设置中文字体
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-    plt.title('Pearson Correlation Coefficient Heatmap')
+    plt.title('皮尔逊相关系数热力图')
+    # 调整子图参数，增加左侧留白
+    plt.subplots_adjust(left=0.2, bottom=0.3)  # 这里的0.2可以根据需要调整，0.1到0.5之间通常比较合适
     plt.savefig('person_correlation_plot.png')
     plt.show()
 
@@ -201,28 +309,34 @@ def determine_clusters_number_kmean(data, startN, endN):
         silhouette_scores.append(silhouette_score(data, clf.labels_))
 
     # 2. 手肘图-基于平均离差
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 4))
     plt.plot(range(startN, endN), wcss, 'bx-')
-    plt.xlabel('Number of clusters')
+    plt.xlabel('聚类数量')
     plt.ylabel('WCSS')
-    plt.title('The Elbow Method (Average Dissimilarity)')
+    # plt.title('手肘法-基于平均离差')
+    plt.xticks(range(startN, endN))
+    plt.grid(True)
     plt.show()
 
     # 3. 手肘图-基于SSE
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 4))
     plt.plot(range(startN, endN), sse, 'rx-')
-    plt.xlabel('Number of clusters')
+    plt.xlabel('聚类数量')
     plt.ylabel('SSE')
-    plt.title('The Elbow Method (SSE)')
+    # plt.title('手肘法-基于SSE')
+    plt.xticks(range(startN, endN))
+    plt.grid(True)
     plt.show()
 
     # 4. 轮廓系数图
     # 这里我们使用之前计算的轮廓系数
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 4))
     plt.plot(range(startN, endN), silhouette_scores, 'go-')
-    plt.xlabel('Number of clusters')
-    plt.ylabel('Silhouette Coefficient')
-    plt.title('Silhouette Analysis')
+    plt.xlabel('聚类数量')
+    plt.ylabel('轮廓系数')
+    # plt.title('轮廓系数图')
+    plt.xticks(range(startN, endN))
+    plt.grid(True)
     plt.show()
 
 
@@ -255,7 +369,9 @@ def determine_clusters_number_agglomerative(data, startN, endN):
 def plt_AP_result_point(data, n_clusters: int):
     df_normalized_data = data
     # K-means聚类
-    kms = KMeans(n_clusters=n_clusters, init='k-means++')
+    # kms = KMeans(n_clusters=n_clusters, init='k-means++')
+    kms = KMeans(n_clusters=n_clusters, init='random')
+
     data_fig = kms.fit(df_normalized_data)  # 模型拟合
     centers = kms.cluster_centers_  # 计算聚类中心
     labs = kms.labels_  # 为数据打标签
@@ -288,7 +404,7 @@ def plt_AP_result_point(data, n_clusters: int):
     ax = fig.add_subplot(111, projection='3d')
 
     # 绘制三维散点图
-    scatter = ax.scatter(x, y, z, c=labels, marker='x', cmap='viridis', s=20)  # s 参数控制点的大小
+    scatter = ax.scatter(x, y, z, c=labels, marker='x', cmap='turbo', s=20)  # s 参数控制点的大小
 
     # 绘制聚类中心
     for i, center in enumerate(centers):
@@ -302,10 +418,10 @@ def plt_AP_result_point(data, n_clusters: int):
                    label=f'Center {i + 1}')
 
     # 设置图表标题和坐标轴标签
-    ax.set_title('3D Scatter Plot of Centres of Mass of KMeans')
-    ax.set_xlabel('Centre of Mass X')
-    ax.set_ylabel('Centre of Mass Y')
-    ax.set_zlabel('Centre of Mass Z')
+    # ax.set_title('形心三维散点图')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
 
     # 设置视角，旋转45度
     ax.view_init(elev=20, azim=45)
@@ -348,8 +464,8 @@ def visualize_clusters(data, labels, title='Cluster Visualization'):
 def main():
     data = PreprocessDataForAP()
     new_data = cluster_train_pre(data)
-    plt_AP_result_point(new_data, 11)
-    AP_train(new_data,11)
+    plt_AP_result_point(new_data, 13)
+    AP_train(new_data, 13)
     # df_labels = pd.read_csv('ap_result.csv', header=None)
     # labels = df_labels[0].values
     # visualize_clusters(data,labels)

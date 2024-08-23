@@ -430,8 +430,6 @@ def extract_sub_rely_main3(graph: nx.Graph, coplanar_main_sets):
         selected_main_node = handle_nearest_main_node(node,
                                                       nearest_main_nodes,
                                                       graph)
-        if node == '78':
-            print(1)
 
         if selected_main_node is None:
             print(f"node:{node} not have main node")
